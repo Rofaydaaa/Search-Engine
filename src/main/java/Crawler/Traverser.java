@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,25 +17,29 @@ public class Traverser {
   public HashSet<String> visitedLinks = new HashSet<String>();
   private RobotExclusion robotExculsion;
 
+  public Traverser(RobotExclusion robotExculsion) {
+    this.robotExculsion = robotExculsion;
+  }
+
   public void traverse(Database DB, String url) {
     try {
-      String metaWords = " ";
       // The url is safe to crawl
       if (!robotExculsion.robotSafe(URI.create(url).toURL())) {
         System.out.println("The url is not safe to crawl");
-        continue;
+        return;
       }
       // Check if the url is visited
       if (visitedLinks.contains(url)) {
         System.out.println("The url is visited");
-        continue;
+        return;
       }
       // Get the html document
-      htmlDoc = Jsoup.connect(url).get();
-      Element body = htmlDoc.body(); // Get the body of the html document
+      String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36";
+      Connection connection = Jsoup.connect(url).userAgent(userAgent).timeout(20000); // Set the timeout to 10 seconds
+      Document htmlDoc = connection.get();
       this.htmlDoc = Jsoup.parse(htmlDoc.toString()); // Parse the html document
       // Save the html document in a file with the name of the url
-      String fileName = "htmldocs/" + url.substring(url.lastIndexOf("/") + 1) + ".txt";
+      String fileName = "htmldocs/" + url.hashCode() + ".html";
       try {
         FileWriter myWriter = new FileWriter(fileName);
         synchronized (myWriter) // Synchronized so that only one thread can access it at a time
@@ -47,16 +52,10 @@ public class Traverser {
         e.printStackTrace();
       }
       // Get meta words
-      for (Element meta : htmlDoc.select("meta")) {
-        if (meta.attr("name").toLowerCase().equals("keywords")) {
-          metaWords = meta.attr("content").toLowerCase();
-          break;
-        }
-      }
       Elements linksOnPage = htmlDoc.select("a[href]"); // Get all the links on the page
       for (Element link : linksOnPage) {
         this.Links.add(link.absUrl("href")); // Add the links to the list
-        if (this.Links.size() > 50) // If the list size is greater than 50
+        if (this.Links.size() > 200) // If the list size is greater than 50
         {
           break;
         }
@@ -67,27 +66,36 @@ public class Traverser {
       DB.addURL(url, fileName);
       DB.insertLink(getLinks()); // Insert the links in the database
       DB.insertHref(getLinks(), url); // Insert the hrefs in the database
-
+    } catch (SocketTimeoutException e) {
+      System.out.println("The connection timed out for URL: " + url);
     } catch (IOException e) {
       System.out.println("Error in traversing the url.");
       e.printStackTrace();
+    } catch (URISyntaxException e1) {
+      System.out.println("Error in traversing the url.");
+      e1.printStackTrace();
     }
   }
 
   // Retraverse the url updating the links and hrefs
   public void Retraverse(Database DB, String url) {
     try {
-      Document htmlDoc = Jsoup.connect(url).get();
+      // Get the html document
+      String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36";
+      Connection connection = Jsoup.connect(url).userAgent(userAgent).timeout(10000); // Set the timeout to 10 seconds
+      Document htmlDoc = connection.get();
       Elements linksOnPage = htmlDoc.select("a[href]"); // Get all the links on the page
       for (Element link : linksOnPage) {
-        this.Links.add(link.absUrl("href")); // Add the links to the list
-        if (this.Links.size() > 20) // If the list size is greater than 20
+        Links.add(link.absUrl("href")); // Add the links to the list
+        if (Links.size() > 100) // If the list size is greater than 80
         {
           break;
         }
       }
       DB.updateLink(url); // Update the links in the database
-      DB.updateHref(getLinks(), url); // Update the hrefs in the database
+      DB.updateHref(Links, url); // Update the hrefs in the database
+    } catch (SocketTimeoutException e) {
+      System.out.println("The connection timed out for URL: " + url);
     } catch (IOException e) {
       System.out.println("Error in retraversing the url.");
       e.printStackTrace();

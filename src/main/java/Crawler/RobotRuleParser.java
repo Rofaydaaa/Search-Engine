@@ -1,6 +1,7 @@
 package Crawler;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -10,7 +11,7 @@ public class RobotRuleParser {
     List<String> disallowedRules = new ArrayList<>();
     String tempUserAgent = null;
     for (String line : robotText) {
-      line = line.toLowerCase().trim();
+      line = line.toLowerCase();
       if (line.isEmpty() || line.startsWith("#")) // If empty or comment
       {
         continue;
@@ -34,15 +35,17 @@ public class RobotRuleParser {
 
   public static boolean isDisallowedRules(String url, List<String> disallowedRules) {
     // Compile the patterns and store them in a list
-    List<Pattern> patterns = new ArrayList<>();
     for (String rule : disallowedRules) {
       try {
-        patterns.add(Pattern.compile(rule));
+        Pattern pattern = Pattern.compile(rule);
+        Matcher matcher = pattern.matcher(url);
+        if (matcher.find()) {
+          return true;
+        }
       } catch (PatternSyntaxException e) {
-        System.out.println("Error in pattern: " + rule);
+        System.err.println("Invalid regex pattern: " + e.getMessage());
       }
     }
     return false;
   }
-
 }

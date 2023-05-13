@@ -3,12 +3,11 @@ package Crawler;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.concurrent.*;
 
 @SuppressWarnings("ALL")
 public class Crawler implements Runnable {
   private static int maxPages = 6000; // Maximum number of pages to crawl
-  public static int crawlersNumber = 10; // Number of crawlers
+  public static int crawlersNumber = 30; // Number of crawlers
   private Set<String> visitedURLs; // Set of visited URLs
   private static List<String> URLs; // List of URLs to be crawled
 
@@ -17,6 +16,7 @@ public class Crawler implements Runnable {
   Database DB; // Database object
   boolean recrawlflag;// Recrawl the database
   Date recrawlDate; // Recrawl date
+  private RobotExclusion robotExculsion;
 
   // First Constructor
   public Crawler(Database DB, List<String> URLs, int id) {
@@ -32,6 +32,7 @@ public class Crawler implements Runnable {
     Crawler.URLs = URLs;
     this.id = id;
     recrawlDate = new Date();
+    robotExculsion = new RobotExclusion();
     recrawlflag = false;
   }
 
@@ -39,10 +40,10 @@ public class Crawler implements Runnable {
   public void crawl() throws MalformedURLException, URISyntaxException {
     String currURL = "";
     while (true) {
-
       synchronized (visitedURLs) // Synchronize the visited URLs as it is shared between threads
       {
         if (visitedURLs.size() >= maxPages) {
+          System.out.println("Finished Crawling");
           break;
         }
       }
@@ -51,7 +52,7 @@ public class Crawler implements Runnable {
       {
         if (!URLs.isEmpty()) { // Check if the List is empty
           currURL = URLs.remove(0); // Get the URL from the List
-          if (!visitedURLs.contains(currURL)) { // Check if the URL is visited
+          if (!visitedURLs.contains(currURL)&& currURL !="" ) { // Check if the URL is visited
             visitedURLs.add(currURL); // Add the URL to the visited URLs
           } else {
             continue; // Continue if the URL is visited
@@ -60,9 +61,12 @@ public class Crawler implements Runnable {
       }
       // Crawl the URL if not empty
       if (!currURL.equals("")) {
-        Traverser traverser = new Traverser();
+        Traverser traverser = new Traverser(robotExculsion);
         traverser.traverse(DB, currURL); // Traverse the URL
-        URLs.addAll(traverser.getLinks()); // add the all href and link found to the List
+        synchronized (URLs) // Synchronize the URLs as it is shared between threads
+        {
+          URLs.addAll(traverser.getLinks()); // add the all href and link found to the List
+        }
       }
     }
     Date date = new Date(); // Get the current time
@@ -75,37 +79,35 @@ public class Crawler implements Runnable {
     String currURL = "";
     while (true) {
       if (Thread.currentThread().getName().equals("0")) {
-        URLs.clear(); // Clear the List
-        DB.getVisited(URLs); // Get the visited URLs from the database
+        synchronized (URLs) // Synchronize the URLs as it is shared between threads
+        {
+          URLs.clear(); // Clear the List
+          DB.getVisitedList(URLs); // Get the visited URLs from the database
+        }
         DB.getDate(recrawlDate); // Get the date from the database
       }
       while ((new Date().after(recrawlDate)))
         ; // Wait until the recrawl time after 2 hours
       while (true) {
-        synchronized (URLs) {
+        synchronized (URLs) // Synchronize the URLs as it is shared between threads
+        {
           if (URLs.isEmpty()) {
             Date date = new Date(); // Get the current time
             DB.updateDate(date); // Update the date
             break;
           }
-        }
-        currURL = "";
-        synchronized (URLs) {
-          if (!URLs.isEmpty()) { // Check if the List is empty
-            currURL = URLs.remove(0); // Get the URL from the List
-          }
+          currURL = URLs.remove(0); // Get the URL from the List
         }
         // Crawl the URL if not empty
         if (!currURL.equals("")) {
-          Traverser traverser = new Traverser();
+          Traverser traverser = new Traverser(robotExculsion);
           traverser.Retraverse(DB, currURL); // Traverse the URL
         }
       }
     }
   }
 
-  public void main(String[] args) {
-
+  public static void main(String[] args) throws Exception {
     Set<String> visitedURLs = new HashSet<String>();
     List<String> URLs = new LinkedList<String>();
     List<Thread> threadsList = new ArrayList<Thread>();
@@ -114,15 +116,23 @@ public class Crawler implements Runnable {
     DB.getQueue(URLs);
     DB.getVisited(visitedURLs);
     if (URLs.isEmpty() && visitedURLs.isEmpty()) {
-      readSeed();
+      readSeed(URLs);
     }
+
+    // Calculate the number of URLs to be crawled by each thread
+    int numURLsPerThread = URLs.size() / crawlersNumber;
+
     // Create threads
     for (int i = 0; i < crawlersNumber; i++) {
-      thread1 = new Thread(new Crawler(DB, visitedURLs, URLs, i));
+      int startIndex = i * numURLsPerThread;
+      int endIndex = (i == crawlersNumber - 1) ? URLs.size() : (i + 1) * numURLsPerThread;
+      List<String> subURLs = URLs.subList(startIndex, endIndex);
+      thread1 = new Thread(new Crawler(DB, visitedURLs, subURLs, i));
       thread1.setName(Integer.toString(i));
       threadsList.add(thread1);
       thread1.start();
     }
+
     // Wait for all threads to finish
     for (Thread thread : threadsList) {
       try {
@@ -134,9 +144,9 @@ public class Crawler implements Runnable {
   }
 
   // Read the seeds from the file
-  public static void readSeed() {
+  public static void readSeed(List<String> URLs) {
     try {
-      File file = new File("seeds_list.txt");
+      File file = new File(".//seeds_list.txt");
       Scanner sc = new Scanner(file);
       while (sc.hasNextLine()) {
         String line = sc.nextLine();
@@ -157,8 +167,7 @@ public class Crawler implements Runnable {
       System.out.println("Error in crawling");
       e.printStackTrace();
     }
-    if (recrawlflag)
-      recrawl();
+  //   if (recrawlflag)
+  //     recrawl();
   }
-
 }
