@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Indexer {
 
@@ -15,6 +17,10 @@ public class Indexer {
     DataBaseManager dbManager;
     Trie stoppingWord;
     String stoppingWordDictionaryFilePath;
+    //To store all words in a document
+    // "apple"-> {"word" = "apple", "df" = count, "data"= vector<WordData>}
+    Map<String,WordToSearch> documentDataMap = new HashMap<>();
+    int lengthOfDocument;
     Indexer(URLData urlD, DataBaseManager db){
 
         //build stopping word tries for fast search
