@@ -11,3 +11,5 @@ public class WordToSearch {
 }
 
 //word df {D1:count, url, popularity, lengthOfDocument, filepath, D2:    , D3: }
+//word df{D1:count, url, popularity, lengthOfDocument, filepath, D2:    , D3: }
+
