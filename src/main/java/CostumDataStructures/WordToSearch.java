@@ -1,4 +1,4 @@
-package Indexer;
+package CostumDataStructures;
 
 import java.util.Vector;
 
@@ -10,4 +10,4 @@ public class WordToSearch {
     public Vector<WordData> data = new Vector<>();
 }
 
-//word df{D1:count, url, popularity, lengthOfdocument, filepath, D2:    , D3: }
+//word df {D1:count, url, popularity, lengthOfDocument, filepath, D2:    , D3: }
