@@ -4,14 +4,13 @@ import CostumDataStructures.*;
 import DataBase.DataBaseManager;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-
-//https://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-java-jsoup-example.html#axzz81fybWspY
+import opennlp.tools.stemmer.PorterStemmer;
 public class Indexer {
 
     //url data to be indexed
@@ -30,8 +29,9 @@ public class Indexer {
     //list of lists to store headers words from <h1> -----> <h6>, every row represent a header
     List<List<String>> headerWords;
     //list to store the body words
-    List<String> bodyWords;
+    List<String> paragraphWords;
 
+    PorterStemmer stemmer;
 
     int lengthOfDocument;
     Indexer(URLData urlD, DataBaseManager db){
@@ -42,6 +42,9 @@ public class Indexer {
         //assign data members
         this.dbManager = db;
         this.currentUrlData = urlD;
+
+        this.stemmer = new PorterStemmer();
+        lengthOfDocument = 0;
     }
 
     //This function download and parse the html document from the internet
@@ -55,12 +58,66 @@ public class Indexer {
         String filePath = this.currentUrlData.FilePath;
 
         try {
-            currentDoc = Jsoup.parse(new File(this.currentUrlData.FilePath), "ISO-8859-1");
+            currentDoc = Jsoup.parse(new File(filePath), "UTF-8");
         } catch (IOException e) { e.printStackTrace();}
     }
 
     public void extractData(){
 
+        extractDataTitle();
+        extractDataHeader();
+        extractDataParagraph();
+    }
+    
+
+    public void extractDataTitle(){
+        String titleFullString = currentDoc.title();
+        titleFullString = dataPreProcessingForString(titleFullString);
+        List<String> tempTitleWords = new ArrayList<>(Arrays.asList(titleFullString.split(" ")));
+        titleWords = removeStoppingWord(tempTitleWords);
+        lengthOfDocument += titleWords.size();
+    }
+    public void extractDataHeader(){
+        headerWords = new ArrayList<List<String>>();
+        Elements docBodyElements = currentDoc.body().getAllElements();
+        //List for every Header from h1 to h6
+        for(int i = 0 ; i < 6 ; i++)
+        {
+            headerWords.add(new ArrayList<String>());
+            //extract text from header element
+            Elements headerElements = docBodyElements.select("h"+(i+1));
+
+            headerWords.set(i, removeStoppingWord(dataPreProcessingForListOfString(headerElements.eachText())));
+            lengthOfDocument += headerWords.get(i).size();
+        }
+    }
+    public void extractDataParagraph(){
+        paragraphWords = new ArrayList<>();
+        Elements docBodyElements = currentDoc.body().getAllElements();
+        paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("p").eachText())));
+        paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("span").eachText())));
+        paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("li").eachText())));
+        paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("dt").eachText())));
+        lengthOfDocument += paragraphWords.size();
+    }
+    public List<String> dataPreProcessingForListOfString(List<String> listBeforePreProcessing){
+        List<String> preprocessedWords = new ArrayList<>();
+        for(String fullString : listBeforePreProcessing){
+            String preprocessedWord = dataPreProcessingForString(fullString);
+            preprocessedWords.addAll(Arrays.asList(preprocessedWord.split(" ")));
+        }
+        return preprocessedWords;
+    }
+    public String dataPreProcessingForString(String s){
+        // \W, is equivalent to [^a-zA-Z0-9] regular expression
+        // replace any non-word character with spaces
+        s = s.replaceAll("\\W", " ");
+
+        //remove first and last spaces, remove any leading spaces
+        s = s.trim().replaceAll(" +", " ");
+
+        //convert the word to lower case;
+        return s.toLowerCase();
     }
     public void buildStoppingWord(){
         stoppingWord = new Trie();
@@ -78,5 +135,19 @@ public class Indexer {
         }
     }
 
+    public boolean isStoppingWord(String s){
+        return stoppingWord.search(s);
+    }
 
+    public List<String> removeStoppingWord(List<String> wordsWithStoppingWords){
+        List <String> wordsWithoutStoppingWords = new ArrayList<>();
+        for(String word : wordsWithStoppingWords)
+        {
+            if(!isStoppingWord(word))
+            {
+                wordsWithoutStoppingWords.add(word);
+            }
+        }
+        return wordsWithoutStoppingWords;
+    }
 }
