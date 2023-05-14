@@ -14,6 +14,7 @@ public class DataBaseManager {
     SpamDataCollection spamDataCollection;
     UrlDataCollection urlDataCollection;
     HrefDataCollection hrefDataCollection;
+    LinksDataCollection linksDataCollection;
 
     public DataBaseManager(){
 
@@ -34,6 +35,7 @@ public class DataBaseManager {
         this.historyDataCollection = new HistoryDataCollection(this.SearchEngineDB);
         this.urlDataCollection = new UrlDataCollection(this.SearchEngineDB);
         this.hrefDataCollection = new HrefDataCollection(this.SearchEngineDB);
+        this.linksDataCollection = new LinksDataCollection(this.SearchEngineDB);
     }
 
     ///////////////////////////////ANY COLLECTION QUERY SHOULD BE ACCESSED THROUH THE DATA BASE MANAGER/////////////////////////

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.mongodb.client.MongoClients;
 import org.bson.Document;
 
 import com.mongodb.ConnectionString;
@@ -20,11 +21,30 @@ public class Database {
   MongoCollection<Document> linksPathCollection;
 
   public Database() {
+<<<<<<< Updated upstream
     String uri = "mongodb+srv://rofaydabassem:GMeRcAsBR0nwwXfC@cluster0.sxccutr.mongodb.net/";
     ConnectionString connectionString = new ConnectionString(uri);
     MongoClientSettings settings = MongoClientSettings.builder().applyConnectionString(connectionString).build();
     mongoClient = com.mongodb.client.MongoClients.create(settings);
     crawlerDB = mongoClient.getDatabase("SearchEngine");
+=======
+    //String uri = "mongodb+srv://ahmedemad8:Ahmed412732_@cluster0.jzgbvya.mongodb.net/";
+    //ConnectionString connectionString = new ConnectionString(uri);
+    //MongoClientSettings settings = MongoClientSettings.builder().applyConnectionString(connectionString).build();
+    //mongoClient = com.mongodb.client.MongoClients.create(settings);
+
+    //connect to the database configuration
+    String username = System.getenv("MONGODB_USERNAME");
+    String password = System.getenv("MONGODB_PASSWORD");
+    String clusterHost = "cluster0.sxccutr.mongodb.net";
+    String connectionString = "mongodb+srv://" + username + ":" + password + "@" + clusterHost + "/?retryWrites=true&w=majority";
+    //String connectionString = "mongodb://localhost:27017";
+    this.mongoClient = MongoClients.create(connectionString);
+
+    //DataBase Creation
+    this.crawlerDB = mongoClient.getDatabase("SearchEngine");
+    crawlerDB = mongoClient.getDatabase("CrawlerDB");
+>>>>>>> Stashed changes
     linksCollection = crawlerDB.getCollection("Links");
     hrefCollection = crawlerDB.getCollection("Href");
     linksPathCollection = crawlerDB.getCollection("URL");
