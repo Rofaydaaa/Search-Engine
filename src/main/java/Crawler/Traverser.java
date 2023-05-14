@@ -56,7 +56,7 @@ public class Traverser {
       Elements linksOnPage = htmlDoc.select("a[href]"); // Get all the links on the page
       for (Element link : linksOnPage) {
         this.Links.add(link.absUrl("href")); // Add the links to the list
-        if (this.Links.size() > 80) // If the list size is greater than 30
+        if (this.Links.size() > 60) // If the list size is greater than 30
         {
           break;
         }

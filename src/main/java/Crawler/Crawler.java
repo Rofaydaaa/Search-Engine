@@ -6,7 +6,7 @@ import java.util.*;
 
 @SuppressWarnings("ALL")
 public class Crawler implements Runnable {
-  private static int maxPages = 6000; // Maximum number of pages to crawl
+  private static int maxPages = 6010; // Maximum number of pages to crawl
   public static int crawlersNumber = 100; // Number of crawlers
   private Set<String> visitedURLs; // Set of visited URLs
   private static List<String> URLs; // List of URLs to be crawled
@@ -52,7 +52,7 @@ public class Crawler implements Runnable {
       {
         if (!URLs.isEmpty()) { // Check if the List is empty
           currURL = URLs.remove(0); // Get the URL from the List
-          if (!visitedURLs.contains(currURL)&& currURL !="" ) { // Check if the URL is visited
+          if (!visitedURLs.contains(currURL) && currURL != "") { // Check if the URL is visited
             visitedURLs.add(currURL); // Add the URL to the visited URLs
           } else {
             continue; // Continue if the URL is visited
@@ -62,58 +62,64 @@ public class Crawler implements Runnable {
       // Crawl the URL if not empty
       if (!currURL.equals("")) {
         Traverser traverser = new Traverser(robotExculsion);
-        boolean c = traverser.traverse(DB, currURL); // Traverse the URL
-        if (!c)
-        {
-          synchronized (visitedURLs)
-          {
-          visitedURLs.remove(currURL); // Remove the URL from the visited URLs if it is not crawled
+        boolean errorFlag = traverser.traverse(DB, currURL); 
+        if (!errorFlag) {
+          synchronized (visitedURLs) {
+            // Remove the URL from the visited URLs if it is not crawled
+            visitedURLs.remove(currURL);
+          }
+        } else {
+          synchronized (URLs) {
+            // Add the links to the List if the URL is crawled
+            List<String> links = traverser.getLinks();
+            for (String link : links) {
+              if (!visitedURLs.contains(link)) {
+                synchronized (visitedURLs) {
+                  URLs.add(link);
+                }
+              }
+            }
           }
         }
-        else{
-        synchronized (URLs) // Synchronize the URLs as it is shared between threads
-        {
-          URLs.addAll(traverser.getLinks()); // add the all href and link found to the List
-        }
-      }
       }
     }
-    //Date date = new Date(); // Get the current time
-    //DB.updateDate(date); // Update the date in the database after finishing crawling
-    recrawlflag = true; // Set the recrawl to true
+    // Date date = new Date(); // Get the current time
+    // DB.updateDate(date); // Update the date in the database after finishing
+    // crawling
+    //recrawlflag = true; // Set the recrawl to true
   }
 
   // // Recrawl
   // public void recrawl() {
-  //   String currURL = "";
-  //   while (true) {
-  //     if (Thread.currentThread().getName().equals("0")) {
-  //       synchronized (URLs) // Synchronize the URLs as it is shared between threads
-  //       {
-  //         URLs.clear(); // Clear the List
-  //         DB.getVisitedList(URLs); // Get the visited URLs from the database
-  //       }
-  //       DB.getDate(recrawlDate); // Get the date from the database
-  //     }
-  //     while ((new Date().after(recrawlDate)))
-  //       ; // Wait until the recrawl time after 2 hours
-  //     while (true) {
-  //       synchronized (URLs) // Synchronize the URLs as it is shared between threads
-  //       {
-  //         if (URLs.isEmpty()) {
-  //           Date date = new Date(); // Get the current time
-  //           DB.updateDate(date); // Update the date
-  //           break;
-  //         }
-  //         currURL = URLs.remove(0); // Get the URL from the List
-  //       }
-  //       // Crawl the URL if not empty
-  //       if (!currURL.equals("")) {
-  //         Traverser traverser = new Traverser(robotExculsion);
-  //         traverser.Retraverse(DB, currURL); // Traverse the URL
-  //       }
-  //     }
-  //   }
+  // String currURL = "";
+  // while (true) {
+  // if (Thread.currentThread().getName().equals("0")) {
+  // synchronized (URLs) // Synchronize the URLs as it is shared between threads
+  // {
+  // URLs.clear(); // Clear the List
+  // DB.getVisitedList(URLs); // Get the visited URLs from the database
+  // }
+  // DB.getDate(recrawlDate); // Get the date from the database
+  // }
+  // while ((new Date().after(recrawlDate)))
+  // ; // Wait until the recrawl time after 2 hours
+  // while (true) {
+  // synchronized (URLs) // Synchronize the URLs as it is shared between threads
+  // {
+  // if (URLs.isEmpty()) {
+  // Date date = new Date(); // Get the current time
+  // DB.updateDate(date); // Update the date
+  // break;
+  // }
+  // currURL = URLs.remove(0); // Get the URL from the List
+  // }
+  // // Crawl the URL if not empty
+  // if (!currURL.equals("")) {
+  // Traverser traverser = new Traverser(robotExculsion);
+  // traverser.Retraverse(DB, currURL); // Traverse the URL
+  // }
+  // }
+  // }
   // }
 
   public static void main(String[] args) throws Exception {
@@ -176,7 +182,7 @@ public class Crawler implements Runnable {
       System.out.println("Error in crawling");
       e.printStackTrace();
     }
-  //   if (recrawlflag)
-  //     recrawl();
+    // if (recrawlflag)
+    // recrawl();
   }
 }

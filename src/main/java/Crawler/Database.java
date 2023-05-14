@@ -20,14 +20,14 @@ public class Database {
   MongoCollection<Document> linksPathCollection;
 
   public Database() {
-    String uri = "mongodb+srv://ahmedemad8:Ahmed412732_@cluster0.jzgbvya.mongodb.net/";
+    String uri = "mongodb+srv://rofaydabassem:GMeRcAsBR0nwwXfC@cluster0.sxccutr.mongodb.net/";
     ConnectionString connectionString = new ConnectionString(uri);
     MongoClientSettings settings = MongoClientSettings.builder().applyConnectionString(connectionString).build();
     mongoClient = com.mongodb.client.MongoClients.create(settings);
-    crawlerDB = mongoClient.getDatabase("CrawlerDB");
+    crawlerDB = mongoClient.getDatabase("SearchEngine");
     linksCollection = crawlerDB.getCollection("Links");
     hrefCollection = crawlerDB.getCollection("Href");
-    linksPathCollection = crawlerDB.getCollection("LinksPath");
+    linksPathCollection = crawlerDB.getCollection("URL");
   }
 
   public void insertLink(List<String> links) {
