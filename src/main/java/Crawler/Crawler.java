@@ -7,7 +7,7 @@ import java.util.*;
 @SuppressWarnings("ALL")
 public class Crawler implements Runnable {
   private static int maxPages = 6000; // Maximum number of pages to crawl
-  public static int crawlersNumber = 30; // Number of crawlers
+  public static int crawlersNumber = 100; // Number of crawlers
   private Set<String> visitedURLs; // Set of visited URLs
   private static List<String> URLs; // List of URLs to be crawled
 
@@ -43,7 +43,7 @@ public class Crawler implements Runnable {
       synchronized (visitedURLs) // Synchronize the visited URLs as it is shared between threads
       {
         if (visitedURLs.size() >= maxPages) {
-          System.out.println("Finished Crawling");
+          System.out.println("\nFinished Crawling\n");
           break;
         }
       }
@@ -62,50 +62,59 @@ public class Crawler implements Runnable {
       // Crawl the URL if not empty
       if (!currURL.equals("")) {
         Traverser traverser = new Traverser(robotExculsion);
-        traverser.traverse(DB, currURL); // Traverse the URL
+        boolean c = traverser.traverse(DB, currURL); // Traverse the URL
+        if (!c)
+        {
+          synchronized (visitedURLs)
+          {
+          visitedURLs.remove(currURL); // Remove the URL from the visited URLs if it is not crawled
+          }
+        }
+        else{
         synchronized (URLs) // Synchronize the URLs as it is shared between threads
         {
           URLs.addAll(traverser.getLinks()); // add the all href and link found to the List
         }
       }
+      }
     }
-    Date date = new Date(); // Get the current time
-    DB.updateDate(date); // Update the date in the database after finishing crawling
+    //Date date = new Date(); // Get the current time
+    //DB.updateDate(date); // Update the date in the database after finishing crawling
     recrawlflag = true; // Set the recrawl to true
   }
 
-  // Recrawl
-  public void recrawl() {
-    String currURL = "";
-    while (true) {
-      if (Thread.currentThread().getName().equals("0")) {
-        synchronized (URLs) // Synchronize the URLs as it is shared between threads
-        {
-          URLs.clear(); // Clear the List
-          DB.getVisitedList(URLs); // Get the visited URLs from the database
-        }
-        DB.getDate(recrawlDate); // Get the date from the database
-      }
-      while ((new Date().after(recrawlDate)))
-        ; // Wait until the recrawl time after 2 hours
-      while (true) {
-        synchronized (URLs) // Synchronize the URLs as it is shared between threads
-        {
-          if (URLs.isEmpty()) {
-            Date date = new Date(); // Get the current time
-            DB.updateDate(date); // Update the date
-            break;
-          }
-          currURL = URLs.remove(0); // Get the URL from the List
-        }
-        // Crawl the URL if not empty
-        if (!currURL.equals("")) {
-          Traverser traverser = new Traverser(robotExculsion);
-          traverser.Retraverse(DB, currURL); // Traverse the URL
-        }
-      }
-    }
-  }
+  // // Recrawl
+  // public void recrawl() {
+  //   String currURL = "";
+  //   while (true) {
+  //     if (Thread.currentThread().getName().equals("0")) {
+  //       synchronized (URLs) // Synchronize the URLs as it is shared between threads
+  //       {
+  //         URLs.clear(); // Clear the List
+  //         DB.getVisitedList(URLs); // Get the visited URLs from the database
+  //       }
+  //       DB.getDate(recrawlDate); // Get the date from the database
+  //     }
+  //     while ((new Date().after(recrawlDate)))
+  //       ; // Wait until the recrawl time after 2 hours
+  //     while (true) {
+  //       synchronized (URLs) // Synchronize the URLs as it is shared between threads
+  //       {
+  //         if (URLs.isEmpty()) {
+  //           Date date = new Date(); // Get the current time
+  //           DB.updateDate(date); // Update the date
+  //           break;
+  //         }
+  //         currURL = URLs.remove(0); // Get the URL from the List
+  //       }
+  //       // Crawl the URL if not empty
+  //       if (!currURL.equals("")) {
+  //         Traverser traverser = new Traverser(robotExculsion);
+  //         traverser.Retraverse(DB, currURL); // Traverse the URL
+  //       }
+  //     }
+  //   }
+  // }
 
   public static void main(String[] args) throws Exception {
     Set<String> visitedURLs = new HashSet<String>();
