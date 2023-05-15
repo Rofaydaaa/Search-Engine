@@ -1,0 +1,6 @@
+.App-container {
+    background-image: linear-gradient(to right bottom, #7a8fd3, #66a0e0, #52b0e7, #44bfea, #45cde9);
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
