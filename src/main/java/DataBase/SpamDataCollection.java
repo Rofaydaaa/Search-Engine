@@ -17,4 +17,14 @@ public class SpamDataCollection {
 
     /////////////////////////////////ANY QUERY ON SPAM COLLECTION SHOULD BE WRITTEN HERE/////////////////////////////////
 
+    public void insertSpamUrl(String url){
+        spamDataCollection.insertOne(new Document("url" ,url));
+    }
+
+    //check if url is in spam collection so that not indexing it if found it again in url that needs to be indexed
+    public boolean isInSpamCollection(String url) {
+        Document query = new Document("url", url);
+        Document result = spamDataCollection.find(query).first();
+        return result != null;
+    }
 }
