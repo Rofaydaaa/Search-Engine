@@ -72,4 +72,6 @@ public class WordsDataCollection {
             wordsDataCollection.insertOne(newWord);
         }
     }
+
+    public
 }

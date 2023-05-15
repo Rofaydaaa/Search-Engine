@@ -1,8 +1,14 @@
 package DataBase;
 
+import CostumDataStructures.URLData;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HrefDataCollection {
 
@@ -17,6 +23,9 @@ public class HrefDataCollection {
     }
 
     /////////////////////////////////ANY QUERY ON HREF COLLECTION SHOULD BE WRITTEN HERE/////////////////////////////////
+    public String getHref(String URL)
+    {
 
+    }
 
 }
