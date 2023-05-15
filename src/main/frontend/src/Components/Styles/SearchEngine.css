@@ -1,0 +1,165 @@
+.searchEngine {
+    font-size: 54px;
+    color: #433e3e;
+    text-align: center;
+    margin-bottom: 60px;
+    padding-top: 100px;
+    font-family: cursive;
+    font-style: italic;
+    cursor: pointer;
+    margin-top: 0;
+}
+
+.searchBar {
+    padding: 10px;
+}
+
+.searchPage{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+
+.deleteButton {
+    cursor: pointer;
+    background-color: white;
+    border: none;
+    height: 35px;
+    flex: 1;
+    margin-left: 5px;
+    border-radius: 60px;
+}
+
+button[disabled]{
+    cursor: not-allowed;
+}
+
+.searchBar {
+    display: flex;
+    flex-direction: row;
+    width: 75%;
+}
+
+.searchIcon {
+    height: 50%;
+}
+
+.deleteIcon {
+    height: 50%;
+}
+
+.searchIcon:not([disabled]):hover {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.searchButton {
+    cursor: pointer;
+    background-color: white;
+    border: none;
+    height: 35px;
+    flex: 1;
+    margin-left: 5px;
+    border-radius: 60px;
+}
+
+.searchFieldBlock {
+    display: flex;
+    flex: 12;
+    margin-right: 6px;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 20px 20px 20px 20px;
+}
+
+.suggestions {
+    background-color: white;
+    border-radius: 0px 0px 20px 20px;
+    list-style: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.suggestions li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.suggestions li:hover, .selected {
+    background-color: #f2f2f2;
+}
+
+.suggestions li:last-child {
+    border-radius: 0px 0px 20px 20px;
+}
+
+.searchField {
+    width: 99%;
+    height: 35px;
+    border-radius: 50px;
+    border: 2px solid white;
+    text-indent: 10px;
+    font-size: large;
+    color: #433e3e;
+}
+
+.searchField:focus {
+    outline: none;
+    border: 2px solid #433e3e;
+    text-indent: 10px;
+    font-size: large;
+    color: #433e3e;
+}
+
+input[type="text"]::placeholder {
+    text-indent: 10px; /* adjust the value to shift the position */
+    font-size: large;
+}
+
+.searchField:hover {
+    border: 2px solid #433e3e;
+}
+
+  /* Media query for smaller screens */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 44px;
+    }
+}
+
+  /* Media query for even smaller screens */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 1070px) {
+    .searchField {
+        width: 98.5%;
+    }
+}
+
+@media (max-width: 700px) {
+    .searchField {
+        width: 98%;
+    }
+}
+
+@media (max-width: 400px) {
+    .searchField {
+        width: 96.3%;
+    }
+}
+
+@media (max-width: 500px) {
+    .searchBar {
+        width: 90%;
+    }
+}

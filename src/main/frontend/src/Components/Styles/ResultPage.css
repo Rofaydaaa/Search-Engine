@@ -1,0 +1,139 @@
+.Results-page {
+    background-image: linear-gradient(to right bottom, #7a8fd3, #66a0e0, #52b0e7, #44bfea, #45cde9);
+    position: relative;
+    min-height: 100vh;
+}
+
+.Results-header h2{
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #433e3e;
+    padding-right: 15px;
+    font-family: cursive;
+    font-style: italic;
+    cursor: pointer;
+}
+
+.Results-header{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 15px;
+}
+
+.Results-body{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    padding-left: 20px;
+}
+
+.Results-body .aux-Info{
+    margin-top: 4px;
+    margin-bottom: 4px;
+    color: #585656;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: lighter;
+    font-size: 18px;
+    position: relative;
+    z-index: 1;
+}
+
+.Results-header .searchBar {
+    position: absolute;
+    margin-left: 80px;
+}
+
+.suggestions {
+    position: relative;
+    z-index: 2;
+}
+
+.Result-data {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.Result-heading {
+    font-family: cursive;
+    font-size: 20px;
+    color: #04627b;
+    margin: 0;
+}
+
+.Result-URL {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: #585656;
+    margin: 5px 0px;
+}
+
+.Result-paragraph {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: #433e3e;
+    margin: 5px 0px;
+}
+
+.Result-block {
+    margin-top: 10px;
+    margin-right: 20px;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(1.7px);
+    -webkit-backdrop-filter: blur(1.7px);
+    transition: background-color 0.3s ease-in-out;
+}
+
+.Result-block:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 40px rgba(0, 0, 0, 0.15);
+}
+
+.Result-block:hover .Result-heading {
+    color: #04627b;
+    text-decoration: underline;
+}
+
+.No-results {
+    font-family: cursive;
+    font-size: 20px;
+    color: #04627b;
+    margin-right: 20px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.Results-footer {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.Results-footer .MuiPagination-root {
+    display: inline-block;
+}
+
+@media  (max-width: 500px) {
+    .Results-header .searchBar{
+        width: 70%;
+    }   
+}
+
+@media  (max-width: 380px) {
+    .Results-header .searchBar{
+        width: 65%;
+    }   
+}
