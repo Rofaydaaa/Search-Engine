@@ -2,6 +2,7 @@ package Indexer;
 import DataBase.DataBaseManager;
 import CostumDataStructures.*;
 import java.util.List;
+import java.util.Map;
 
 public class Indexer {
 
@@ -25,6 +26,14 @@ public class Indexer {
                 indexer.dbManager.getSpamDataCollection().insertSpamUrl(url.URL);
             else{
                 //Add the wordDataMap to the wordsDataCollection
+                Map<String,WordData> map = indexerForSingleDoc.getWordHashTable();
+
+                for(Map.Entry<String, WordData> entry : map.entrySet()) {
+                    indexer.dbManager.getWordsDataCollection().updateWordToSearchData(entry.getKey(), entry.getValue());
+                }
+
+                //update index URL
+                indexer.dbManager.getUrlDataCollection().updateIndex(url.URL);
 
             }
         }

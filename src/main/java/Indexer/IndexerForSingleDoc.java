@@ -83,6 +83,9 @@ public class IndexerForSingleDoc {
     public boolean isSpamDoc(){
         return isSpam;
     }
+    public Map<String,WordData> getWordHashTable(){
+        return documentWordsDataMap;
+    }
     public void extractDataTitle(){
         String titleFullString = currentDoc.title();
         titleFullString = dataPreProcessingForString(titleFullString);
@@ -125,6 +128,7 @@ public class IndexerForSingleDoc {
             currentWordData.filepath = currentUrlData.FilePath;
             currentWordData.count = 0;
             currentWordData.lengthOfDoc = lengthOfDocument;
+            //currentWordData.popularity = currentUrlData.popularity;
         }
         //update the current word data
         currentWordData.count += 1;

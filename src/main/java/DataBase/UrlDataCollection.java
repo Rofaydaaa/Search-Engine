@@ -30,7 +30,7 @@ public class UrlDataCollection {
 
     //Get URLs that aren't indexed before
     public List<URLData> getURLsDataNotIndexed() {
-        MongoCursor<Document> cur = this.urlDataCollection.find(new BasicDBObject("indexed",0)).cursor();
+        MongoCursor<Document> cur = this.urlDataCollection.find(new BasicDBObject("indexed",false)).cursor();
         List<URLData> DataList = new ArrayList<>();
         while (cur.hasNext()) {
             Document doc = cur.next();
