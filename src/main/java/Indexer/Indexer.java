@@ -23,7 +23,8 @@ public class Indexer {
     // "apple"-> {"word" = "apple", "df" = count, "data"= vector<WordData>}
     //List and maps for text storage
     //to store all the word with it data structure
-    Map<String,WordToSearch> documentDataMap = new HashMap<>();
+    Map<String,WordToSearch> documentDataMap;
+    Map<String,WordData> documentWordDataMap;
     //list to store title Words
     List<String> titleWords;
     //list of lists to store headers words from <h1> -----> <h6>, every row represent a header
@@ -45,6 +46,7 @@ public class Indexer {
 
         this.stemmer = new PorterStemmer();
         lengthOfDocument = 0;
+        documentDataMap = new HashMap<>();
     }
 
     //This function download and parse the html document from the internet
@@ -62,13 +64,17 @@ public class Indexer {
         } catch (IOException e) { e.printStackTrace();}
     }
 
-    public void extractData(){
-
+    public void extractAllData(){
         extractDataTitle();
         extractDataHeader();
         extractDataParagraph();
     }
-    
+
+    public void addAllDataToDocumentDataMap(){
+         addTitleToDocumentDataMap();
+         addHeadersToDocumentDataMap();
+         addParagraphToDocumentDataMap();
+    }
 
     public void extractDataTitle(){
         String titleFullString = currentDoc.title();
@@ -99,6 +105,37 @@ public class Indexer {
         paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("li").eachText())));
         paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("dt").eachText())));
         lengthOfDocument += paragraphWords.size();
+    }
+
+    public void addTitleToDocumentDataMap(){
+        for(String word : titleWords)
+        {
+            word = stemmer.stem(word);
+            WordToSearch currentWordToSearch = documentDataMap.get(Word);
+            if(currentWordToSearch == null)//if the word is not in the map yet
+            {
+                currentWordToSearch = new WordToSearch();
+                currentWordToSearch.word = word;
+                currentWordToSearch.df = 0;
+                currentWordToSearch.data = new Vector<>();
+            }
+            //update the current wordData
+            currentWordToSearch.df += 1;
+            //insert a new WordData to the data vector
+            WordData currentWordData = new WordData();
+            //Add it Back to the Map
+            DocumentMap.put(Word,CurrentWordData);
+            if(CurrentWordData.count >= LengthOfDoc*SpamThreshold)
+            {
+                isSpam = true;
+            }
+        }
+    }
+    public void addHeadersToDocumentDataMap(){
+
+    }
+    public void addParagraphToDocumentDataMap(){
+
     }
     public List<String> dataPreProcessingForListOfString(List<String> listBeforePreProcessing){
         List<String> preprocessedWords = new ArrayList<>();
@@ -134,11 +171,9 @@ public class Indexer {
             e.printStackTrace();
         }
     }
-
     public boolean isStoppingWord(String s){
         return stoppingWord.search(s);
     }
-
     public List<String> removeStoppingWord(List<String> wordsWithStoppingWords){
         List <String> wordsWithoutStoppingWords = new ArrayList<>();
         for(String word : wordsWithStoppingWords)
