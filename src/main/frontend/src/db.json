@@ -1,0 +1,78 @@
+{
+    "results": [{
+            "title": "The Shawshank Redemption",
+            "url": "https://www.youtube.com/embed/6hB3S9bIaco",
+            "paragraph": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."
+        },
+        {
+            "title": "The Godfather",
+            "url": "https://www.youtube.com/embed/sY1S34973zA",
+            "paragraph": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son."
+        },
+        {
+            "title": "The Dark Knight",
+            "url": "https://www.youtube.com/embed/EXeTwQWrcwY",
+            "paragraph": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice."
+        },
+        {
+            "title": "The Lord of the Rings: The Fellowship of the Ring",
+            "url": "https://www.youtube.com/embed/V75dMMIW2B4",
+            "paragraph": "A meek hobbit of the Shire and eight companions set out on a journey to Mount Doom to destroy the One Ring and the dark lord Sauron."
+        },
+        {
+            "title": "Forrest Gump",
+            "url": "https://www.youtube.com/embed/bLvqoHBptjg",
+            "paragraph": "The presidencies of Kennedy and Johnson, the events of Vietnam, Watergate and other historical events unfold through the perspective of an Alabama man with an IQ of 75, whose only desire is to be reunited with his childhood sweetheart."
+        },
+        {
+            "title": "The Silence of the Lambs",
+            "url": "https://www.youtube.com/embed/lQKs169Sl0I",
+            "paragraph": "A young F.B.I. cadet must receive the help of an incarcerated and manipulative cannibal killer to help catch another serial killer, a madman who skins his victims."
+        },
+        {
+            "title": "The Lion King",
+            "url": "https://www.youtube.com/embed/4sj1MT05lAA",
+            "paragraph": "A young lion prince is cast out of his pride by his cruel uncle, who claims he killed his father. While the uncle rules with an iron paw, the prince grows up beyond the Savannah, living by a philosophy: No worries for the rest of your days. But when his past comes to haunt him, the young prince must decide his fate: Will he remain an outcast or face his demons and become what he needs to be?"
+        },
+        {
+            "title": "Star Wars: Episode IV - A New Hope",
+            "url": "https://www.youtube.com/embed/1g3_CFmnU7k",
+            "paragraph": "Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, a Wookiee and two droids to save the galaxy from the Empire's world-destroying battle station, while also attempting to rescue Princess Leia from the mysterious Darth Vader."
+        },
+        {
+            "title": "The Matrix",
+            "url": "https://www.youtube.com/embed/vKQi3bBA1y8",
+            "paragraph": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers."
+        },
+        {
+            "title": "Inception",
+            "url": "https://www.youtube.com/embed/YoHD9XEInc0",
+            "paragraph": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO."
+        },
+        {
+            "title": "Interstellar",
+            "url": "https://www.youtube.com/embed/zSWdZVtXT7E",
+            "paragraph": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."
+        },
+        {
+            "title": "Gladiator",
+            "url": "https://www.youtube.com/embed/ol67qo3WhJk",
+            "paragraph": "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery."
+        },
+        {
+            "title": "Jurassic Park",
+            "url": "https://www.youtube.com/embed/lc0UehYemQA",
+            "paragraph": "A pragmatic paleontologist visiting an almost complete theme park is tasked with protecting a couple of kids after a power failure causes the park's cloned dinosaurs to run loose."
+        },
+        {
+            "title": "The Terminator",
+            "url": "https://www.youtube.com/embed/c4Jo8QoOTQ4",
+            "paragraph": "A human soldier is sent from 2029 to 1984 to stop an almost indestructible cyborg killing machine, sent from the same year, which has been programmed to execute a young woman whose unborn son is the key to humanity's future salvation."
+        },
+        {
+            "title": "Titanic",
+            "url": "https://www.youtube.com/embed/zCy5WQ9S4c0",
+            "paragraph": "A seventeen-year-old aristocrat falls in love with a kind but poor artist aboard the luxurious, ill-fated R.M.S. Titanic."
+        }
+    ]
+}
