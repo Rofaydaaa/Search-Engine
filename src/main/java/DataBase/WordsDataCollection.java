@@ -16,11 +16,11 @@ public class WordsDataCollection {
     MongoDatabase SearchEngineDB;
     MongoCollection<Document> wordsDataCollection;
 
-    //       {
+//           {
 //        "word": "string",
 //            "dataFrequency": "number",
 //            "documents": [   // nested documents?? list
-    //        {
+//            {
 //                "count": "number",
 //                "url": "string",
 //                "popularity": "number",
@@ -52,8 +52,8 @@ public class WordsDataCollection {
                 .append("url", data.url)
                 .append("lengthOfDocument", data.lengthOfDoc)
                 .append("filePath", data.filepath)
-                .append("position", data.position);
-                //.append("popularity", data.popularity)
+                .append("position", data.position)
+                .append("popularity", data.popularity);
         Document query = new Document("word", word);
         //get the word needed for update
         Document result = wordsDataCollection.find(query).first();
@@ -78,7 +78,7 @@ public class WordsDataCollection {
 
     // fill WordToSearch object
     // TODO: change this to be used in query processor to get words in search query
-    public Map<String,WordToSearch> getWordToSearch() {
+    public Map<String,WordToSearch> getWordMapToSearch() {
         Map<String,WordToSearch> map = new HashMap();
         try (MongoCursor<Document> cur = this.wordsDataCollection.find().cursor()) {
             while (cur.hasNext()) {
@@ -95,5 +95,27 @@ public class WordsDataCollection {
             }
         }
         return map;
+    }
+
+    //This function get a stemmed word and return the record corresponding to it
+    public WordToSearch getWordToSearch(String word){
+
+        // Create the query
+        Document query = new Document("word", word);
+        // get the matching document
+        Document result = this.wordsDataCollection.find(query).first();
+        WordToSearch wordToSearch = null;
+        if(result!=null){
+            wordToSearch = new WordToSearch();
+            wordToSearch.word = word;
+            wordToSearch.df = result.getInteger("dataFrequency");
+            wordToSearch.data = new Vector<>();
+            List<Document> nestedDocs = result.getList("documents", Document.class);
+            for (Document nestedDoc : nestedDocs) {
+                WordData wd = new WordData(nestedDoc);
+                wordToSearch.data.add(wd);
+            }
+        }
+        return wordToSearch;
     }
 }

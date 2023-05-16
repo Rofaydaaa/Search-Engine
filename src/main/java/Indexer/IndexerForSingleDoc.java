@@ -130,7 +130,7 @@ public class IndexerForSingleDoc {
             currentWordData.filepath = currentUrlData.FilePath;
             currentWordData.count = 0;
             currentWordData.lengthOfDoc = lengthOfDocument;
-            //currentWordData.popularity = currentUrlData.popularity;
+            currentWordData.popularity = currentUrlData.popularity;
         }
         //update the current word data
         currentWordData.count += 1;

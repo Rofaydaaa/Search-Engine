@@ -12,7 +12,7 @@ public class Ranker {
     int TotalNumberOfURLS = 6000;
 
     public Map<String, Double> tf_IDF= new HashMap<>(){{put("", 0.0);}};
-    Ranker(DataBaseManager db,Map<String,WordToSearch> wd){
+    public Ranker(DataBaseManager db,Map<String,WordToSearch> wd){
         this.dbManager = db;
         this.WordData = wd;
     }

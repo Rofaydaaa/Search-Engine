@@ -1,6 +1,8 @@
 package Indexer;
 import DataBase.DataBaseManager;
 import CostumDataStructures.*;
+import Ranker.PageRank;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +39,7 @@ public class Indexer {
 
             }
         }
+        PageRank pageRank = new PageRank();
 
         //To test a specific web page
 //        Indexer indexer = new Indexer(new DataBaseManager());
