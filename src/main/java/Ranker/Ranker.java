@@ -1,15 +1,14 @@
 package Ranker;
 
 import CostumDataStructures.WordToSearch;
+import CostumDataStructures.URLData;
 import DataBase.DataBaseManager;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Ranker {
     DataBaseManager dbManager;
     Map<String,WordToSearch> WordData;
-
     int TotalNumberOfURLS = 6000;
 
     public Map<String, Double> tf_IDF= new HashMap<>(){{put("", 0.0);}};
@@ -27,7 +26,7 @@ public class Ranker {
                 if (tf_IDF.containsKey(entry.getValue().data.get(i).url)) {
                     tf_IDF.put(entry.getValue().data.get(i).url, tf_IDF.get(entry.getValue().data.get(i).url) + IDF*TF*calculatePositionsWeight(word,i));
                 } else {
-                    tf_IDF.put(entry.getValue().data.get(i).url, IDF*TF);
+                    tf_IDF.put(entry.getValue().data.get(i).url, IDF*TF*calculatePositionsWeight(word,i));
                 }
             }
         }
@@ -48,5 +47,18 @@ public class Ranker {
         return totalWeight;
     }
 
+    // sort the urls according to their relevance and include popularity in score
+    public Map<URLData, Double> sortUrls(){
+        Map<URLData, Double> sortedUrls = new HashMap<>();
+        for (Map.Entry<String, Double> entry : tf_IDF.entrySet()) {
+            URLData currentData =  dbManager.getUrlDataCollection().getURLData(entry.getKey());
+            sortedUrls.put( currentData, entry.getValue()*currentData.popularity);
+        }
+        // sort the urls according to their relevance
+        sortedUrls = sortedUrls.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(java.util.stream.Collectors.toMap(java.util.Map.Entry::getKey, java.util.Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        return sortedUrls;
+    }
 }
 

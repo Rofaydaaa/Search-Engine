@@ -1,24 +1,27 @@
 package DataBase;
 
 import CostumDataStructures.WordData;
+import CostumDataStructures.WordToSearch;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
 
 public class WordsDataCollection {
 
     MongoDatabase SearchEngineDB;
     MongoCollection<Document> wordsDataCollection;
-//       {
+
+    //       {
 //        "word": "string",
 //            "dataFrequency": "number",
-//            "documents": [
-//        {
-//            "count": "number",
+//            "documents": [   // nested documents?? list
+    //        {
+//                "count": "number",
 //                "url": "string",
 //                "popularity": "number",
 //                "lengthOfDocument": "number",
@@ -36,8 +39,7 @@ public class WordsDataCollection {
 //    ...
 //  ]
 //    }
-    protected WordsDataCollection(MongoDatabase db){
-
+    protected WordsDataCollection(MongoDatabase db) {
         this.SearchEngineDB = db;
         this.wordsDataCollection = this.SearchEngineDB.getCollection("Words");
     }
@@ -73,5 +75,24 @@ public class WordsDataCollection {
         }
     }
 
-    public
+    // fill WordToSearch object
+    // TODO: change this to be used in query processor to get words in search query
+    public Map<String,WordToSearch> getWordToSearch() {
+        Map<String,WordToSearch> map = new HashMap();
+        try (MongoCursor<Document> cur = this.wordsDataCollection.find().cursor()) {
+            while (cur.hasNext()) {
+                Document doc = cur.next();
+                WordToSearch word = new WordToSearch();
+                word.word= doc.getString("word");
+                word.df= doc.getInteger("dataFrequency");
+                List<Document> nestedDocs = doc.getList("documents", Document.class);
+                for (Document nestedDoc : nestedDocs) {
+                    WordData wd = new WordData(nestedDoc);
+                    word.data.add(wd);
+                }
+                map.put(word.word,word);
+            }
+        }
+        return map;
+    }
 }

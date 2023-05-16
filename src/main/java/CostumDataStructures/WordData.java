@@ -36,5 +36,10 @@ public class WordData {
         position.put("h5" , (Integer) object.get("h5"));
         position.put("h6" , (Integer) object.get("h6"));
         position.put("body" , (Integer) object.get("body"));
+        count = object.getInteger("count");
+        url = object.getString("url");
+        popularity = object.getInteger("popularity");
+        lengthOfDoc = object.getInteger("lengthOfDocument");
+        filepath = object.getString("filePath");
     }
 }

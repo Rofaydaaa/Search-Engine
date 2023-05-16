@@ -38,7 +38,7 @@ public class DataBaseManager {
         this.linksDataCollection = new LinksDataCollection(this.SearchEngineDB);
     }
 
-    ///////////////////////////////ANY COLLECTION QUERY SHOULD BE ACCESSED THROUH THE DATA BASE MANAGER/////////////////////////
+    ///////////////////////////////ANY COLLECTION QUERY SHOULD BE ACCESSED THROUGH THE DATA BASE MANAGER/////////////////////////
     //EX: if you are in the indexer class, and you want to make a query on the url collection
     //you have to make a data member from DataBaseManager "let's give it a name as dbManager",
     // dbManager.getUrlDataCollection.<The_Query_You_Want> :)
@@ -56,9 +56,7 @@ public class DataBaseManager {
         return spamDataCollection;
     }
 
-    public UrlDataCollection getUrlDataCollection() {
-        return urlDataCollection;
-    }
+    public UrlDataCollection getUrlDataCollection() { return urlDataCollection; }
 
     public HrefDataCollection getHrefDataCollection() {
         return hrefDataCollection;

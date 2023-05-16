@@ -5,11 +5,10 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
 public class HrefDataCollection {
 
     MongoDatabase SearchEngineDB;
@@ -23,9 +22,28 @@ public class HrefDataCollection {
     }
 
     /////////////////////////////////ANY QUERY ON HREF COLLECTION SHOULD BE WRITTEN HERE/////////////////////////////////
-    public String getHref(String URL)
+    public List<String> getHref(String URL)
     {
+        MongoCursor<Document> cur = hrefDataCollection.find(Filters.eq("refBy", URL)).cursor();
+        List<String> URLsRefByInput = new ArrayList<>();
+        while (cur.hasNext())
+        {
+            Document doc = cur.next();
+            URLsRefByInput.add(doc.getString("url"));
+        }
+        return URLsRefByInput;
+    }
 
+    public List<String> getURL(String Href)
+    {
+        MongoCursor<Document> cur = hrefDataCollection.find(Filters.eq("url", Href)).cursor();
+        List<String> URLsRefByInput = new ArrayList<>();
+        while (cur.hasNext())
+        {
+            Document doc = cur.next();
+            URLsRefByInput.add(doc.getString("refBy"));
+        }
+        return URLsRefByInput;
     }
 
 }
