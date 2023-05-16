@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import DataBase.HrefDataCollection;
 import com.mongodb.client.MongoClients;
 import org.bson.Document;
 
@@ -39,6 +40,7 @@ public class Database {
     }
     linksCollection.insertMany(entry);
   }
+
 
   public void insertHref(List<String> links, String url) {
     List<Document> entry =new ArrayList<>();
