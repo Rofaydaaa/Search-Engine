@@ -28,7 +28,6 @@ public class QueryProcessing {
     Map<URLData, Double> rankingResults;
     List<URLData> correctResults;
     boolean isValidSearch;
-    double searchTime;
     double startTime;
     double endTime;
     public QueryProcessing(String stringToSearch){
@@ -141,16 +140,13 @@ public class QueryProcessing {
         // "paragraph":"100 coffee cup + 2 hours sleep/day + lots of cry + stack overflow = solved bug in 3 days"
         for(URLData url : this.correctResults){
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("searchText", this.currentStringToSearch);
             jsonObject.put("title", getPageTitle(url));
             jsonObject.put("URL", url.URL);
             jsonObject.put("paragraph", getParagraph(url));
-            jsonObject.put("historyRank", 1);
             this.returnedJsonArray.put(jsonObject);
-
-            //ADD it to history dataBase
-            this.dbManager.getHistoryDataCollection().InsertHistory(jsonObject, this.currentStringToSearch);
         }
+        //Insert in the dataBase
+        this.dbManager.getHistoryDataCollection().InsertHistory(this.returnedJsonArray, this.currentStringToSearch, 1);
     }
 
     public JSONArray getResultJSONList(){
@@ -164,7 +160,7 @@ public class QueryProcessing {
 
     public double getSearchTime(){
 
-        return searchTime;
+        return endTime - startTime;
     }
     public String getPageTitle(URLData urlData){
 
@@ -188,7 +184,7 @@ public class QueryProcessing {
 //            Document currentDoc = Jsoup.parse(new File(filePath), "UTF-8");
 //
 //        } catch (IOException e) {
-//            e.printStackTrace();
+//            e.printStackTrace();:
 //        }
     }
 
