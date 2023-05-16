@@ -7,7 +7,7 @@ import java.util.*;
 @SuppressWarnings("ALL")
 public class Crawler implements Runnable {
   private static int maxPages = 6010; // Maximum number of pages to crawl
-  public static int crawlersNumber = 100; // Number of crawlers
+  public static int crawlersNumber = 300; // Number of crawlers
   private Set<String> visitedURLs; // Set of visited URLs
   private static List<String> URLs; // List of URLs to be crawled
 
@@ -62,7 +62,7 @@ public class Crawler implements Runnable {
       // Crawl the URL if not empty
       if (!currURL.equals("")) {
         Traverser traverser = new Traverser(robotExculsion);
-        boolean errorFlag = traverser.traverse(DB, currURL); 
+        boolean errorFlag = traverser.traverse(DB, currURL);
         if (!errorFlag) {
           synchronized (visitedURLs) {
             // Remove the URL from the visited URLs if it is not crawled
@@ -86,7 +86,7 @@ public class Crawler implements Runnable {
     // Date date = new Date(); // Get the current time
     // DB.updateDate(date); // Update the date in the database after finishing
     // crawling
-    //recrawlflag = true; // Set the recrawl to true
+    // recrawlflag = true; // Set the recrawl to true
   }
 
   // // Recrawl
@@ -124,7 +124,7 @@ public class Crawler implements Runnable {
 
   public static void main(String[] args) throws Exception {
     Set<String> visitedURLs = new HashSet<String>();
-    List<String> URLs = new LinkedList<String>();
+    List<String> URLs = new ArrayList<String>();
     List<Thread> threadsList = new ArrayList<Thread>();
     Thread thread1 = null;
     Database DB = new Database();
@@ -133,16 +133,34 @@ public class Crawler implements Runnable {
     if (URLs.isEmpty() && visitedURLs.isEmpty()) {
       readSeed(URLs);
     }
-
-    // Calculate the number of URLs to be crawled by each thread
-    int numURLsPerThread = URLs.size() / crawlersNumber;
+    else if (!visitedURLs.isEmpty()) {
+      // Add files in /htmldocs in a set
+      File folder = new File(".//htmldocs");
+      File[] listOfFiles = folder.listFiles();
+      Set<String> files = new HashSet<String>();
+      for (File file : listOfFiles) {
+        if (file.isFile()) {
+          files.add(file.getName());
+        }
+      }
+      Set<String> temp = new HashSet<String>();
+      DB.getURLHash(temp);
+      // Get Difference between visited URLs and files in /htmldocs
+      files.removeAll(temp);
+      // Get the url of the hash codes from the database
+      Set<String> temp2 = new HashSet<String>();
+      DB.getURLFromHash(files,temp2);
+      visitedURLs.addAll(temp2);
+      // Add the difference to the Database
+      for (String t:temp2)
+      {
+        DB.addURL(t, "htmldocs/" + t.hashCode() + ".html");
+      }
+    }
 
     // Create threads
     for (int i = 0; i < crawlersNumber; i++) {
-      int startIndex = i * numURLsPerThread;
-      int endIndex = (i == crawlersNumber - 1) ? URLs.size() : (i + 1) * numURLsPerThread;
-      List<String> subURLs = URLs.subList(startIndex, endIndex);
-      thread1 = new Thread(new Crawler(DB, visitedURLs, subURLs, i));
+      thread1 = new Thread(new Crawler(DB, visitedURLs, URLs, i));
       thread1.setName(Integer.toString(i));
       threadsList.add(thread1);
       thread1.start();

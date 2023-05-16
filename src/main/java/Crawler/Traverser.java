@@ -40,42 +40,49 @@ public class Traverser {
       this.htmlDoc = Jsoup.parse(htmlDoc.toString()); // Parse the html document
       // Save the html document in a file with the name of the url
       String fileName = "htmldocs/" + url.hashCode() + ".html";
-      try {
-        FileWriter myWriter = new FileWriter(fileName);
-        synchronized (myWriter) // Synchronized so that only one thread can access it at a time
-        {
+      try (FileWriter myWriter = new FileWriter(fileName)) {
+        synchronized (myWriter) {
           myWriter.write(this.htmlDoc.toString());
-          myWriter.close();
         }
+        visitedLinks.add(url); // Add the url to the visited list
+        DB.addURL(url, fileName); // Add the url to the database
       } catch (IOException e) {
         System.out.println("An error occurred in writing the html documents.");
         e.printStackTrace();
+        File file = new File(fileName);
+        if (file.exists()) {
+          file.delete(); // Delete the file if it exists
+        }
         return false;
       }
       // Get meta words
       Elements linksOnPage = htmlDoc.select("a[href]"); // Get all the links on the page
       for (Element link : linksOnPage) {
         this.Links.add(link.absUrl("href")); // Add the links to the list
-        if (this.Links.size() > 60) // If the list size is greater than 30
+        if (this.Links.size() > 50) // If the list size is greater than 50
         {
           break;
         }
       }
-      // Add the url to the visited list
-      visitedLinks.add(url);
-      // Add the url to the database
-      DB.addURL(url, fileName);
-      DB.insertLink(getLinks()); // Insert the links in the database
-      DB.insertHref(getLinks(), url); // Insert the hrefs in the database
+      
+      
+      DB.updateHref(url);
+      //DB.insertLink(getLinks()); // Insert the links in the database
+      if (Links.contains(url)) {
+        DB.insertHrefVisited(getLinks(), url);// Insert the hrefs in the database
+      }
+      else{
+        DB.insertHref(getLinks(), url);// Insert the hrefs in the database
+      }
     } catch (SocketTimeoutException e) {
       System.out.println("The connection timed out for URL: " + url);
       return false;
     } catch (IOException e) {
-      System.out.println("Error in traversing the url.");
+      System.out.println("Error in traversing the url (IO Exception).");
       e.printStackTrace();
       return false;
     } catch (URISyntaxException e1) {
-      System.out.println("Error in traversing the url.");
+      System.out.println("Error in traversing the url (URI Syntax Exception).");
       e1.printStackTrace();
       return false;
     }
