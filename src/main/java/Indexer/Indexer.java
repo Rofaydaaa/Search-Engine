@@ -37,5 +37,30 @@ public class Indexer {
 
             }
         }
+
+        //To test a specific web page
+//        Indexer indexer = new Indexer(new DataBaseManager());
+//        //Test a single document from the internet
+//        URLData url = new URLData();
+//        url.URL = "https://www.google.com.eg/";
+//        url.FilePath = "./src/main/java/Indexer/gg.html";
+//        IndexerForSingleDoc indexerForSingleDoc = new IndexerForSingleDoc(url);
+//        indexerForSingleDoc.index();
+//        if(indexerForSingleDoc.isSpamDoc())
+//            //add to Spam db
+//            indexer.dbManager.getSpamDataCollection().insertSpamUrl(url.URL);
+//        else{
+//            //Add the wordDataMap to the wordsDataCollection
+//            Map<String,WordData> map = indexerForSingleDoc.getWordHashTable();
+//
+//            for(Map.Entry<String, WordData> entry : map.entrySet()) {
+//                indexer.dbManager.getWordsDataCollection().updateWordToSearchData(entry.getKey(), entry.getValue());
+//            }
+//
+//            //update index URL
+//            indexer.dbManager.getUrlDataCollection().updateIndex(url.URL);
+//
+//        }
+
     }
 }

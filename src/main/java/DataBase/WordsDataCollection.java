@@ -63,6 +63,7 @@ public class WordsDataCollection {
 
             Document update = new Document("$set", new Document("dataFrequency", updatedDataFrequency))
                     .append("$push", new Document("documents", newDocument));
+            wordsDataCollection.updateOne(query, update);
         }
         //if the word is not in the database, add one
         else{

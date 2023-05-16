@@ -78,6 +78,7 @@ public class IndexerForSingleDoc {
             addHeadersToDocumentWordsDataMap();
         if(!isSpam)
             addParagraphToDocumentWordsDataMap();
+        documentWordsDataMap.remove("");
     }
 
     public boolean isSpamDoc(){
@@ -113,6 +114,7 @@ public class IndexerForSingleDoc {
         paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("p").eachText())));
         paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("span").eachText())));
         paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("li").eachText())));
+        paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("td").eachText())));
         paragraphWords.addAll(removeStoppingWord(dataPreProcessingForListOfString(docBodyElements.select("dt").eachText())));
         lengthOfDocument += paragraphWords.size();
     }
@@ -196,7 +198,7 @@ public class IndexerForSingleDoc {
     }
     public void buildStoppingWord(){
         stoppingWord = new Trie();
-        stoppingWordDictionaryFilePath = "stoppingWords.txt";
+        stoppingWordDictionaryFilePath = "./src/main/java/Indexer/stoppingWords.txt";
 
         try (FileReader fileReader = new FileReader(stoppingWordDictionaryFilePath);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
