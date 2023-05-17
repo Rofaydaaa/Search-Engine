@@ -25,7 +25,7 @@ public class Ranker {
             int containedInURL = 1;
             for (int i=0;i<entry.getValue().data.size();i++){
                 if (entry.getValue().data.get(i).url.contains(word))
-                    containedInURL = 100;
+                    containedInURL = 1000;
                 else
                     containedInURL = 1;
                 double TF = (double)entry.getValue().data.get(i).count/entry.getValue().data.get(i).lengthOfDoc;

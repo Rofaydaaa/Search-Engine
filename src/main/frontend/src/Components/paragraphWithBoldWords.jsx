@@ -2,7 +2,7 @@ import "./Styles/paragraphWithBoldWords.css"
 
 function exactMatch(word, boldWords) {
     for (let i = 0; i < boldWords.length; i++) {
-        if (word.match(boldWords[i]/gi)) {
+        if (word.match(new RegExp(boldWords[i],"i"))) {
             return true;
         }
     }
@@ -11,6 +11,10 @@ function exactMatch(word, boldWords) {
 
 function paragraphWithBoldWords(paragraph, boldWords) {
     
+    if(boldWords.startsWith('"') && boldWords.endsWith('"')){
+        boldWords = boldWords.substring(1, boldWords.length - 1);
+    }
+
     const boldArr = boldWords.split(' ');
     // Split the paragraph into an array of words and map over it
     const boldParagraph = paragraph.split(" ").map((word) => {

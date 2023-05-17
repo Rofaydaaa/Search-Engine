@@ -65,6 +65,10 @@ function ResultPage(props) {
 
     const handlePagination = (event, value) => {
         setCurrentPage(value);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     }
 
     const getResults = (text) => {

@@ -191,7 +191,7 @@ public class QueryProcessing {
             Document document = Jsoup.parse(new File(filePath), "UTF-8");
 
             // Define the order of element types to search
-            String[] elementTypes = {"p", "span", "h1", "h2", "h3", "h4", "h5", "h6", "li", "dt"};
+            String[] elementTypes = {"p", "span", "h1", "h2", "h3", "h4", "h5", "h6", "li", "dt", "small", "div"};
 
             // Iterate over each element type
             for (String elementType : elementTypes) {
@@ -235,6 +235,8 @@ public class QueryProcessing {
         //if they are the same add it to this array (this.correctResults), if not then continue
         //NOTE: if no web pages are found, set the this.isValidSearch = false;
 
+        this.currentStringToSearch = this.currentStringToSearch.substring(1, this.currentStringToSearch.length() - 1);
+
         for(Map.Entry<WordData, Double> entry : this.rankingResults.entrySet()){
             WordData urlData = entry.getKey();
             String filePath = urlData.filepath;
@@ -250,7 +252,7 @@ public class QueryProcessing {
                 int searchWordsLength = searchWords.length;
                 int docWordsLength = docWords.length;
                 while(searchWordsIndex < searchWordsLength && docWordsIndex < docWordsLength){
-                    if(searchWords[searchWordsIndex].equals(docWords[docWordsIndex])){
+                    if(searchWords[searchWordsIndex].equalsIgnoreCase(docWords[docWordsIndex])){
                         searchWordsIndex++;
                         docWordsIndex++;
                     }
@@ -258,6 +260,8 @@ public class QueryProcessing {
                         searchWordsIndex = 0;
                         docWordsIndex++;
                     }
+
+
                 }
                 if(searchWordsIndex == searchWordsLength){
                     this.correctResults.add(urlData);
