@@ -14,11 +14,6 @@ public class SuggestionController {
     @Autowired
     private SuggestionsService suggestionsService;
 
-    @PostMapping
-    public ResponseEntity<SingleSuggestion> addSuggestion(@RequestBody Map<String, String> payload){
-        return new ResponseEntity<SingleSuggestion>(suggestionsService.addSuggestion(payload.get("suggestion")), HttpStatus.OK);
-    }
-
     @GetMapping
     public ResponseEntity<List<SingleSuggestion>> getAllSuggestions(){
         return new ResponseEntity<List<SingleSuggestion>>(suggestionsService.getAllSuggestionsSortedByPopularity(), HttpStatus.OK);

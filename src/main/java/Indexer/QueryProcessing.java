@@ -140,6 +140,8 @@ public class QueryProcessing {
         // "paragraph":"100 coffee cup + 2 hours sleep/day + lots of cry + stack overflow = solved bug in 3 days"
         for(URLData url : this.correctResults){
             JSONObject jsonObject = new JSONObject();
+            if(url.URL == null)
+                continue;
             jsonObject.put("title", getPageTitle(url));
             jsonObject.put("URL", url.URL);
             jsonObject.put("paragraph", getParagraph(url));
@@ -189,9 +191,11 @@ public class QueryProcessing {
     }
 
     public void phraseSearch(){
-        //itirate over all the returned urls comming from the ranker i.e this.rankingResults
+        //iterate over all the returned urls coming from the ranker i.e. this.rankingResults
         //get the first element that has the same word as the phraseSearch and start comparing from here
         //if they are the same add it to this array (this.correctResults), if not then continue
         //NOTE: if no web pages are found, set the this.isValidSearch = false;
+        
+        
     }
 }

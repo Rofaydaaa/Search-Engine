@@ -22,18 +22,10 @@ public class SuggestionsService {
 
     public List<SingleSuggestion> getAllSuggestionsSortedByPopularity() {
         Query query = new Query();
-        Sort sort = Sort.by(Sort.Direction.DESC, "popularity");
+        Sort sort = Sort.by(Sort.Direction.DESC, "historyRank");
         query.with(sort);
+        query.fields().exclude("result");
         List<SingleSuggestion> suggestions = mongoTemplate.find(query, SingleSuggestion.class);
         return suggestions;
-    }
-
-    @Transactional
-    public SingleSuggestion addSuggestion(String suggestion) {
-        Query query = new Query(Criteria.where("suggestion").is(suggestion));
-        Update update = new Update().inc("popularity", 1);
-        FindAndModifyOptions options = new FindAndModifyOptions().returnNew(true).upsert(true);
-        SingleSuggestion suggestion1 = mongoTemplate.findAndModify(query, update, options, SingleSuggestion.class);
-        return suggestion1;
     }
 }

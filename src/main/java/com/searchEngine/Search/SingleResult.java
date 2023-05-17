@@ -13,6 +13,6 @@ public class SingleResult {
     @Id
     private ObjectId id;
     private String title;
-    private String url;
+    private String URL;
     private String paragraph;
 }

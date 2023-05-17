@@ -6,17 +6,20 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class SingleSuggestion {
     @Id
     private ObjectId id;
-    private String suggestion;
-    private int popularity;
+    private String searchText;
+    private int historyRank;
+    private List<SingleResult> result;
 
     public SingleSuggestion(String suggestion, int popularity) {
-        this.suggestion = suggestion;
-        this.popularity = popularity;
+        this.searchText = suggestion;
+        this.historyRank = popularity;
     }
 }

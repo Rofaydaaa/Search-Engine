@@ -38,7 +38,7 @@ public class WordData {
         position.put("body" , (Integer) object.get("body"));
         count = object.getInteger("count");
         url = object.getString("url");
-        popularity = object.getInteger("popularity");
+        popularity = object.getDouble("popularity");
         lengthOfDoc = object.getInteger("lengthOfDocument");
         filepath = object.getString("filePath");
     }
