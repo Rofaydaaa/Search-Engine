@@ -76,7 +76,7 @@ public class QueryProcessing {
     public String dataPreProcessing(String s){
         // \W, is equivalent to [^a-zA-Z0-9] regular expression
         // replace any non-word character with spaces
-        s = s.replaceAll("\\W", " ");
+        s = s.replaceAll("[\\W\\d]", " ");
 
         //remove first and last spaces, remove any leading spaces
         s = s.trim().replaceAll(" +", " ");
