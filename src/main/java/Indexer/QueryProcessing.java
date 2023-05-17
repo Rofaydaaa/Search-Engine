@@ -170,18 +170,40 @@ public class QueryProcessing {
         if(this.currentStringToSearch.startsWith("\"") && this.currentStringToSearch.endsWith("\"")){
             //check for and
             if(containAnd()){
-
+                List<WordData> l1 = phraseSearch(this.extractedString1);
+                List<WordData> l2 = phraseSearch(this.extractedString2);
+                // Combine the 2 list
+                this.correctResults = l1;
+                this.correctResults.addAll(l2);
+                // Remove duplicates using HashSet
+                HashSet<WordData> set = new HashSet<>(this.correctResults);
+                this.correctResults.clear();
+                this.correctResults.addAll(set);
             }
             //check for or
-            if(containOr()){
+            else if(containOr()){
+                List<WordData> l1 = phraseSearch(this.extractedString1);
+                List<WordData> l2 = phraseSearch(this.extractedString2);
+                // Get the intersection of the two lists
+                l1.retainAll(l2);
+                this.correctResults = l1;
 
             }
             //check for not
-            if(containNot()){
-
+            else if(containNot()){
+                List<WordData> l1 = phraseSearch(this.extractedString1);
+                List<WordData> l2 = phraseSearch(this.extractedString2);
+                //exclude l2 from l1
+                l1.removeAll(l2);
+                this.correctResults = l1;
             }
-            else
-                phraseSearch();
+            else {
+                this.correctResults = phraseSearch(this.currentStringToSearch.substring(1, this.currentStringToSearch.length() - 1));
+            }
+            //No document have the same exact match
+            if(this.correctResults.size() == 0){
+                this.isValidSearch = false;
+            }
         }
         else{
             originalSearch();
@@ -284,14 +306,12 @@ public class QueryProcessing {
         return  pageParagraph;
     }
 
-    public void phraseSearch(){
+    public List<WordData> phraseSearch(String searchString){
         //iterate over all the returned urls coming from the ranker i.e. this.rankingResults
         //get the first element that has the same word as the phraseSearch and start comparing from here
         //if they are the same add it to this array (this.correctResults), if not then continue
         //NOTE: if no web pages are found, set the this.isValidSearch = false;
-
-        this.currentStringToSearch = this.currentStringToSearch.substring(1, this.currentStringToSearch.length() - 1);
-
+        List<WordData> correctRes = new ArrayList<>();
         for(Map.Entry<WordData, Double> entry : this.rankingResults.entrySet()){
             WordData urlData = entry.getKey();
             String filePath = urlData.filepath;
@@ -301,7 +321,7 @@ public class QueryProcessing {
                 Document currentDoc = Jsoup.parse(new File(filePath), "UTF-8");
                 String docText = currentDoc.text();
                 String[] docWords = docText.split(" ");
-                String[] searchWords = this.currentStringToSearch.split(" ");
+                String[] searchWords = searchString.split(" ");
                 int searchWordsIndex = 0;
                 int docWordsIndex = 0;
                 int searchWordsLength = searchWords.length;
@@ -319,18 +339,12 @@ public class QueryProcessing {
 
                 }
                 if(searchWordsIndex == searchWordsLength){
-                    this.correctResults.add(urlData);
+                    correctRes.add(urlData);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
-
-        //No document have the same exact match
-        if(this.correctResults.size() == 0){
-            this.isValidSearch = false;
-        }
-        
     }
 }
