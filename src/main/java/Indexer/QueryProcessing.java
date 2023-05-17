@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,6 +33,10 @@ public class QueryProcessing {
     List<WordData> correctResults;
     List<String> searchWordsList;
     List<String> stemmedSearchWordsList;
+
+    //To store the extracted string from the search in case of and/or/not
+    String extractedString1;
+    String extractedString2;
     boolean isValidSearch;
     double startTime;
     double endTime;
@@ -43,6 +49,8 @@ public class QueryProcessing {
         this.returnedJsonArray = new JSONArray();
         this.correctResults = new Vector<>();
         this.stemmedSearchWordsList = new Vector<>();
+        this.extractedString1 = "";
+        this.extractedString2 = "";
         //execute the queryProcessing functionality directly from the constructor
         buildStoppingWord();
         startTime = System.currentTimeMillis();
@@ -122,11 +130,58 @@ public class QueryProcessing {
         return wordsWithoutStoppingWords;
     }
 
+    public boolean containAnd(){
+        // Create the regular expression pattern
+        String pattern = "\"([^\"]+)\"\\s+and\\s+\"([^\"]+)\"";
+        return extractPattern(pattern);
+    }
+
+    public boolean containOr() {
+        // Create the regular expression pattern
+        String pattern = "\"([^\"]+)\"\\s+or\\s+\"([^\"]+)\"";
+        return extractPattern(pattern);
+    }
+
+    public boolean containNot(){
+        // Create the regular expression pattern
+        String pattern = "\"([^\"]+)\"\\s+not\\s+\"([^\"]+)\"";
+        return extractPattern(pattern);
+    }
+
+    public boolean extractPattern(String pattern){
+        // Create a Pattern object
+        Pattern regex = Pattern.compile(pattern);
+        // Create a Matcher object
+        Matcher matcher = regex.matcher(this.currentStringToSearch);
+
+        // Check if the input string matches the pattern
+        if(matcher.find())
+        {
+            this.extractedString1 = matcher.group(1);
+            this.extractedString2 = matcher.group(2);
+            return true;
+        }
+        else
+            return false;
+    }
     public void processTheRankerResult(){
 
         //check if phraseSearching
         if(this.currentStringToSearch.startsWith("\"") && this.currentStringToSearch.endsWith("\"")){
-            phraseSearch();
+            //check for and
+            if(containAnd()){
+
+            }
+            //check for or
+            if(containOr()){
+
+            }
+            //check for not
+            if(containNot()){
+
+            }
+            else
+                phraseSearch();
         }
         else{
             originalSearch();

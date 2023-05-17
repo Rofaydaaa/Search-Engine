@@ -19,7 +19,8 @@ public class Database {
   MongoCollection<Document> hrefCollection;
   MongoCollection<Document> linksPathCollection;
 
-  public Database() {String uri = "mongodb+srv://rofaydabassem:GMeRcAsBR0nwwXfC@cluster0.sxccutr.mongodb.net/";
+  public Database() {//String uri = "mongodb+srv://rofaydabassem:GMeRcAsBR0nwwXfC@cluster0.sxccutr.mongodb.net/";
+    String uri = "mongodb://localhost:27017";
     ConnectionString connectionString = new ConnectionString(uri);
     MongoClientSettings settings = MongoClientSettings.builder().applyConnectionString(connectionString).build();
     mongoClient = com.mongodb.client.MongoClients.create(settings);

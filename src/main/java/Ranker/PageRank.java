@@ -30,8 +30,10 @@ public class PageRank {
         }
         double value =0;
         for(int i =0; i<2;i++){
+            int k = 0;
             for(String url : URLS)
             {
+                k++;
                 for(String parent : AllParents.get(url))
                 {
                     value+=((popularity.get(parent)==null || AllHrefs.get(parent) == null )?0:popularity.get(parent))/AllHrefs.get(parent).size();
@@ -39,6 +41,8 @@ public class PageRank {
                 double pagerank=(1-d)+d*value;
                 popularity.put(url,pagerank);
                 value=0;
+                System.out.print("Done with page rank url: ");
+                System.out.println(k);
             }
         }
         dbManager.getUrlDataCollection().updatePopularity(popularity);

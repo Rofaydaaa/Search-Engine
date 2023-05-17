@@ -18,12 +18,14 @@ public class DataBaseManager {
 
     public DataBaseManager(){
 
-        //connect to the database configuration
-        //String username = System.getenv("MONGODB_USERNAME");
-        //String password = System.getenv("MONGODB_PASSWORD");
-        String clusterHost = "cluster0.sxccutr.mongodb.net";
-        String connectionString = "mongodb+srv://" + "rofaydabassem" + ":" + "GMeRcAsBR0nwwXfC" + "@" + clusterHost + "/?retryWrites=true&w=majority";
-        //String connectionString = "mongodb://localhost:27017";
+//        //connect to the database configuration
+//        //String username = System.getenv("MONGODB_USERNAME");
+//        //String password = System.getenv("MONGODB_PASSWORD");
+//        String clusterHost = "cluster0.sxccutr.mongodb.net";
+//        String connectionString = "mongodb+srv://" + "rofaydabassem" + ":" + "GMeRcAsBR0nwwXfC" + "@" + clusterHost + "/?retryWrites=true&w=majority";
+//        //String connectionString = "mongodb://localhost:27017";
+
+        String connectionString = "mongodb://localhost:27017";
         this.mongoClient = MongoClients.create(connectionString);
 
         //DataBase Creation
