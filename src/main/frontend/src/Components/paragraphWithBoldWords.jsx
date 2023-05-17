@@ -1,7 +1,6 @@
 import "./Styles/paragraphWithBoldWords.css"
 
 function exactMatch(word, boldWords) {
-    console.log(word, boldWords);
     for (let i = 0; i < boldWords.length; i++) {
         if (word.toLowerCase() == boldWords[i].toLowerCase()) {
             return true;

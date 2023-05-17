@@ -37,6 +37,17 @@ public class Indexer {
             if (indexerForSingleDoc.isSpamDoc())
                 //add to Spam the vector
                 indexer.spamUrls.add(url.URL);
+            //{
+                //Add the wordDataMap to the wordsDataCollection
+//                Map<String, WordData> map = indexerForSingleDoc.getWordHashTable();
+//
+//                for (Map.Entry<String, WordData> entry : map.entrySet()) {
+//                    indexer.dbManager.getWordsDataCollection().updateWordToSearchData(entry.getKey(), entry.getValue());
+//                }
+//
+//                //update index URL
+//                indexer.dbManager.getUrlDataCollection().updateIndex(url.URL);
+//            }
             }
         //Insert the spam to the database
         //check is there is spam

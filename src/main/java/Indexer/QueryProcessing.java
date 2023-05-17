@@ -15,6 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class QueryProcessing {
     Ranker ranker;
@@ -27,6 +29,8 @@ public class QueryProcessing {
     JSONArray returnedJsonArray;
     Map<URLData, Double> rankingResults;
     List<URLData> correctResults;
+    List<String> searchWordsList;
+    List<String> stemmedSearchWordsList;
     boolean isValidSearch;
     double startTime;
     double endTime;
@@ -38,6 +42,7 @@ public class QueryProcessing {
         this.rankingResults = new HashMap<>();
         this.returnedJsonArray = new JSONArray();
         this.correctResults = new Vector<>();
+        this.stemmedSearchWordsList = new Vector<>();
         //execute the queryProcessing functionality directly from the constructor
         buildStoppingWord();
         startTime = System.currentTimeMillis();
@@ -53,13 +58,18 @@ public class QueryProcessing {
     }
     public boolean processSearchString(){
 
-        String s = dataPreProcessing(currentStringToSearch);
-        List<String> searchWordsList = List.of(s.split(" "));
-        searchWordsList = removeStoppingWord(searchWordsList);
-        searchWordsList.remove("");
-        if(searchWordsList.isEmpty())
+        String s = dataPreProcessing(this.currentStringToSearch);
+        this.searchWordsList = List.of(s.split(" "));
+        this.searchWordsList = removeStoppingWord(this.searchWordsList);
+        for(int i = 0; i < this.searchWordsList.size(); i++){
+            String w = this.searchWordsList.get(i);
+            w = stemmer.stem(w);
+            if(w.length() > 2)
+                this.stemmedSearchWordsList.add(w);
+        }
+        if(this.stemmedSearchWordsList.isEmpty())
             return false;
-        for(String word : searchWordsList){
+        for(String word : this.stemmedSearchWordsList){
             WordToSearch wts = dbManager.getWordsDataCollection().getWordToSearch(word);
             if(wts != null){
                 rankingWordsInSearch.put(word,wts);
@@ -179,15 +189,49 @@ public class QueryProcessing {
     }
 
     public String getParagraph(URLData urlData) {
+        String filePath = urlData.FilePath;
+        String pageParagraph = "";
+        try {
+            // Connect to the web page and retrieve its HTML
+            Document document = Jsoup.parse(new File(filePath), "UTF-8");
 
-        return "";
-//        String filePath = urlData.FilePath;
-//        try {
-//            Document currentDoc = Jsoup.parse(new File(filePath), "UTF-8");
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();:
-//        }
+            // Define the order of element types to search
+            String[] elementTypes = {"p", "span", "h1", "h2", "h3", "h4", "h5", "h6", "li", "dt"};
+
+            // Iterate over each element type
+            for (String elementType : elementTypes) {
+                // Select elements of the current type
+                Elements elements = document.select(elementType);
+
+                // Iterate over the selected elements
+                for (Element element : elements) {
+                    // Get the text of the element
+                    String elementText = element.text();
+
+                    // Check if any of the strings in the list are present in the element
+                    for (String searchString : this.stemmedSearchWordsList) {
+                        if (elementText.toLowerCase().contains(searchString.toLowerCase()))
+                        {
+                            pageParagraph = elementText;
+                            break;
+                        }
+                    }
+
+                    // If a matching element is found, exit the loop
+                    if (!pageParagraph.isEmpty()) {
+                        break;
+                    }
+                }
+
+                // If a matching element is found, exit the loop
+                if (!pageParagraph.isEmpty()) {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return  pageParagraph;
     }
 
     public void phraseSearch(){
@@ -195,7 +239,42 @@ public class QueryProcessing {
         //get the first element that has the same word as the phraseSearch and start comparing from here
         //if they are the same add it to this array (this.correctResults), if not then continue
         //NOTE: if no web pages are found, set the this.isValidSearch = false;
-        
+
+        for(Map.Entry<URLData, Double> entry : this.rankingResults.entrySet()){
+            URLData urlData = entry.getKey();
+            String filePath = urlData.FilePath;
+            try {
+                Document currentDoc = Jsoup.parse(new File(filePath), "UTF-8");
+                String docText = currentDoc.text();
+                String[] docWords = docText.split(" ");
+                String[] searchWords = this.currentStringToSearch.split(" ");
+                int searchWordsIndex = 0;
+                int docWordsIndex = 0;
+                int searchWordsLength = searchWords.length;
+                int docWordsLength = docWords.length;
+                while(searchWordsIndex < searchWordsLength && docWordsIndex < docWordsLength){
+                    if(searchWords[searchWordsIndex].equals(docWords[docWordsIndex])){
+                        searchWordsIndex++;
+                        docWordsIndex++;
+                    }
+                    else{
+                        searchWordsIndex = 0;
+                        docWordsIndex++;
+                    }
+                }
+                if(searchWordsIndex == searchWordsLength){
+                    this.correctResults.add(urlData);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        //No document have the same exact match
+        if(this.correctResults.size() == 0){
+            this.isValidSearch = false;
+        }
         
     }
 }
