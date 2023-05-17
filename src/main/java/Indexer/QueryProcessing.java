@@ -195,6 +195,45 @@ public class QueryProcessing {
         //get the first element that has the same word as the phraseSearch and start comparing from here
         //if they are the same add it to this array (this.correctResults), if not then continue
         //NOTE: if no web pages are found, set the this.isValidSearch = false;
+
+        for(Map.Entry<URLData, Double> entry : this.rankingResults.entrySet()){
+            URLData urlData = entry.getKey();
+            String filePath = urlData.FilePath;
+            try {
+                Document currentDoc = Jsoup.parse(new File(filePath), "UTF-8");
+                String docText = currentDoc.text();
+                String[] docWords = docText.split(" ");
+                String[] searchWords = this.currentStringToSearch.split(" ");
+                int searchWordsIndex = 0;
+                int docWordsIndex = 0;
+                int searchWordsLength = searchWords.length;
+                int docWordsLength = docWords.length;
+                while(searchWordsIndex < searchWordsLength && docWordsIndex < docWordsLength){
+                    if(searchWords[searchWordsIndex].equals(docWords[docWordsIndex])){
+                        searchWordsIndex++;
+                        docWordsIndex++;
+                    }
+                    else{
+                        searchWordsIndex = 0;
+                        docWordsIndex++;
+                    }
+                }
+                if(searchWordsIndex == searchWordsLength){
+                    this.correctResults.add(urlData);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        //No document have the same exact match
+        if(this.correctResults.size() == 0){
+            this.isValidSearch = false;
+        }
+
+        
+
         
         
     }
