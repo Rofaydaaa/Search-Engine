@@ -11,6 +11,7 @@ public class WordToSearch {
     //array of documents containing the word
     public Vector<WordData> data = new Vector<>();
 
+    // url          worddata
     public Map<String, WordData> dataMap = new HashMap<>();
 }
 
