@@ -237,9 +237,12 @@ public class QueryProcessing {
     public JSONArray getResultJSONList() {
         if (isValidSearch) {
             createJsonObject();
+            endTime = System.currentTimeMillis();
             return this.returnedJsonArray;
-        } else
+        } else {
+            endTime = System.currentTimeMillis();
             return new JSONArray(); //this will return an empty json array
+        }
     }
 
     public double getSearchTime() {
@@ -269,7 +272,7 @@ public class QueryProcessing {
             Document document = Jsoup.parse(new File(filePath), "UTF-8");
 
             // Define the order of element types to search
-            String[] elementTypes = {"p", "span", "h1", "h2", "h3", "h4", "h5", "h6", "li", "dt", "small", "div"};
+            String[] elementTypes = {"h1", "h2", "h3", "h4", "h5", "h6", "li", "td", "dt", "small", "a", "div", "p", "span"};
 
             // Iterate over each element type
             for (String elementType : elementTypes) {
@@ -284,7 +287,22 @@ public class QueryProcessing {
                     // Check if any of the strings in the list are present in the element
                     for (String searchString : this.stemmedSearchWordsList) {
                         if (elementText.toLowerCase().contains(searchString.toLowerCase())) {
+//                            int firstIndex = elementText.indexOf(searchString.toLowerCase());
+//                            if (firstIndex > 125 && elementText.length() > 250) {
+//                                pageParagraph = elementText.substring(firstIndex - 125, firstIndex + 120);
+//                            } else if (elementText.length() < 250) {
+//                                pageParagraph = elementText;
+//                            } else if (firstIndex < 125 && elementText.length() > 250) {
+//                                pageParagraph = elementText.substring(0, 250);
+//                            }
                             pageParagraph = elementText;
+                            if(pageParagraph.length() > 300)
+                                pageParagraph = extractTextWithWord(pageParagraph, searchString, 300);
+                            break;
+                        }
+
+                        // If a matching element is found, exit the loop
+                        if (!pageParagraph.isEmpty()) {
                             break;
                         }
                     }
@@ -294,17 +312,13 @@ public class QueryProcessing {
                         break;
                     }
                 }
-
-                // If a matching element is found, exit the loop
-                if (!pageParagraph.isEmpty()) {
-                    break;
-                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return pageParagraph;
     }
+
 
     public List<WordData> phraseSearch(String searchString) {
         //iterate over all the returned urls coming from the ranker i.e. this.rankingResults
@@ -346,4 +360,37 @@ public class QueryProcessing {
         }
         return correctRes;
     }
+
+    public String extractTextWithWord(String text, String word, int size) {
+        // Split the text into words
+        String[] words = text.split("\\s+");
+
+        // Find the index of the word
+        int wordIndex = -1;
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equalsIgnoreCase(word)) {
+                wordIndex = i;
+                break;
+            }
+        }
+
+        // If the word is found
+        if (wordIndex != -1) {
+            // Calculate the start and end indices for the extracted part
+            int startIndex = Math.max(0, wordIndex - (size / 2));
+            int endIndex = Math.min(words.length - 1, wordIndex + (size / 2));
+
+            // Extract the part of the text
+            StringBuilder extractedText = new StringBuilder();
+            for (int i = startIndex; i <= endIndex; i++) {
+                extractedText.append(words[i]).append(" ");
+            }
+            return extractedText.toString().trim();
+        }
+
+        // If the word is not found, return an empty string
+        return "";
+    }
 }
+
+
