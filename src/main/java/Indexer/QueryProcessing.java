@@ -135,9 +135,9 @@ public class QueryProcessing {
 
         //the JSON object has the following fields
         // "search Text":"how to solve your bug in 3 days only"
-        // "title":"solving bugs"
-        // "URL":"programmingGeeksGeek.com"
-        // "paragraph":"100 coffee cup + 2 hours sleep/day + lots of cry + stack overflow = solved bug in 3 days"
+//         "title":"solving bugs"
+//         "URL":"programmingGeeksGeek.com"
+//         "paragraph":"100 coffee cup + 2 hours sleep/day + lots of cry + stack overflow = solved bug in 3 days"
         for(URLData url : this.correctResults){
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("title", getPageTitle(url));

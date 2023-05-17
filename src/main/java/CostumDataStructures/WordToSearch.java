@@ -1,5 +1,7 @@
 package CostumDataStructures;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 public class WordToSearch {
@@ -8,6 +10,8 @@ public class WordToSearch {
     public int df;
     //array of documents containing the word
     public Vector<WordData> data = new Vector<>();
+
+    public Map<String, WordData> dataMap = new HashMap<>();
 }
 
 //word df {D1:count, url, popularity, lengthOfDocument, filepath, D2:    , D3: }

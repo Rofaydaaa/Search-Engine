@@ -45,7 +45,7 @@ public class HistoryDataCollection {
             // Insert the new documents as a list
             Document resultDocument = new Document("result", documents)
                     .append("historyRank", rank)
-                    .append("result", documents);
+                    .append("searchText", searchString);
             historyDataCollection.insertOne(resultDocument);
         }
     }
@@ -70,4 +70,34 @@ public class HistoryDataCollection {
 //        }
 //
 //    }
+    public static void main(String[] args) {
+
+        //this is for testing the function
+        // Java object 1
+        String title1 = "solving bugs";
+        String URL1 = "programmingGeeksGeek.com";
+        String paragraph1 = "100 coffee cup + 2 hours sleep/day + lots of cry + stack overflow = solved bug in 3 days";
+
+// Create the JSON object and set the field values
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("title", title1);
+        jsonObject1.put("URL", URL1);
+        jsonObject1.put("paragraph", paragraph1);
+
+        String title3 = "debugging code";
+        String URL3 = "codingGeeksGeek.com";
+        String paragraph3 = "10 cups of coffee + 4 hours sleep/day + minimal crying + thorough debugging = fixed code in 1 week";
+
+// Create the JSON object and set the field values
+        JSONObject jsonObject3 = new JSONObject();
+        jsonObject3.put("title", title3);
+        jsonObject3.put("URL", URL3);
+        jsonObject3.put("paragraph", paragraph3);
+
+        JSONArray returnedJsonArray = new JSONArray();
+        returnedJsonArray.put(jsonObject1);
+        returnedJsonArray.put(jsonObject3);
+        DataBaseManager db = new DataBaseManager();
+        db.getHistoryDataCollection().InsertHistory(returnedJsonArray, "how to solve a bug in 1 day", 1);
+    }
 }
