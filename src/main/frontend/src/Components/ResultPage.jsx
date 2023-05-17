@@ -71,6 +71,11 @@ function ResultPage(props) {
         });
     }
 
+    const handleURLClick = (event) => {
+        const url = event.target.closest('.Result-block').querySelector('.Result-URL').innerHTML;
+        window.open(url, '_blank');
+    }
+
     const getResults = (text) => {
         props.getResults(text);
     }
@@ -83,11 +88,11 @@ function ResultPage(props) {
                     <h2 onClick={returnToHome}> Engine</h2>
                 </div>
                 <SearchBar
-                searchText={props.searchText}
-                suggestionsFlag={enableSuggestions}
-                setFlag={disableSuggestions}
-                handleSearch={handleSearch}
-                getResults={getResults}/>
+                    searchText={props.searchText}
+                    suggestionsFlag={enableSuggestions}
+                    setFlag={disableSuggestions}
+                    handleSearch={handleSearch}
+                    getResults={getResults}/>
                 {shouldNavigate && <Navigate to='/'/>}
                 {shouldNavigateToAnotherSearch && <Navigate to='/Results'/>}
             </div>
@@ -99,35 +104,35 @@ function ResultPage(props) {
                 ) : (
                     <>
                         <div>
-                        {/* Check if the time property is defined before accessing it */}
-                        {searchResults.length > 0 && time !== 0 && (
-                            <div className='aux-Info'>About {searchResults.length} results in {time/1000} seconds</div>
-                        )}
+                            {/* Check if the time property is defined before accessing it */}
+                            {searchResults.length > 0 && time !== 0 && (
+                                <div className='aux-Info'>About {searchResults.length} results in {time/1000} seconds</div>
+                            )}
                         </div>
-                        {searchResults.length > 0 ? 
-                        searchResults.slice((currentPage - 1) *10, currentPage * 10).map((res, index)=>
-                        (<div className='Results' key={index}>
-                            <div className='Result-block'>
-                                <div className='Result-data'>
-                                    <h4 className='Result-heading'>{res.title}</h4>
-                                    <a className='Result-URL'>{res.URL}</a>
-                                    <p className='Result-paragraph'>
-                                        {paragraphWithBoldWords(res.paragraph, searchTextCpy)}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>))
-                        : (<div className='No-results Result-block'>
-                            No results found
-                        </div>)}
+                        {searchResults.length > 0 ?
+                            searchResults.slice((currentPage - 1) *10, currentPage * 10).map((res, index)=>
+                                (<div className='Results' key={index}>
+                                    <div className='Result-block' onClick={handleURLClick}>
+                                        <div className='Result-data'>
+                                            <h4 className='Result-heading'>{res.title}</h4>
+                                            <a className='Result-URL'>{res.URL}</a>
+                                            <p className='Result-paragraph'>
+                                                {paragraphWithBoldWords(res.paragraph, searchTextCpy)}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>))
+                            : (<div className='No-results Result-block'>
+                                No results found
+                            </div>)}
                         {searchResults.length > 0 ? (
                             <div className='Results-footer'>
                                 <Stack spacing={2}>
                                     <Pagination
-                                    count={pagesNumber}
-                                    variant="outlined"
-                                    onChange={handlePagination}
-                                    size='medium'/>
+                                        count={pagesNumber}
+                                        variant="outlined"
+                                        onChange={handlePagination}
+                                        size='medium'/>
                                 </Stack>
                             </div>
                         ) : null}

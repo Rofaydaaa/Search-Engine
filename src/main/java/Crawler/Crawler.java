@@ -9,7 +9,7 @@ import java.util.*;
 
 @SuppressWarnings("ALL")
 public class Crawler implements Runnable {
-  private static int maxPages = 6010; // Maximum number of pages to crawl
+  private static int maxPages = 6000; // Maximum number of pages to crawl
   public static int crawlersNumber = 300; // Number of crawlers
   private Set<String> visitedURLs; // Set of visited URLs
   private static List<String> URLs; // List of URLs to be crawled
