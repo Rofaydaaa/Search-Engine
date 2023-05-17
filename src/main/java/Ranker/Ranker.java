@@ -60,5 +60,17 @@ public class Ranker {
                 .collect(java.util.stream.Collectors.toMap(java.util.Map.Entry::getKey, java.util.Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         return sortedUrls;
     }
-}
+
+//    public static void main(String []args) {
+//        DataBaseManager db = new DataBaseManager();
+//        Map<String,WordToSearch> WordData;
+//        WordData = db.getWordsDataCollection().getWordMapToSearch();
+//        Ranker r1= new Ranker(db,WordData);
+//        Map<URLData, Double> test = r1.sortUrls();
+//        // print map
+//        for (Map.Entry<URLData, Double> entry : test.entrySet()) {
+//            System.out.println(entry.getKey().URL + " " + entry.getValue());
+//        }
+    }
+
 
