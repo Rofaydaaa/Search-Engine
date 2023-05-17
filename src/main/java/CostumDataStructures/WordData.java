@@ -18,7 +18,7 @@ public class WordData {
     public Map<String, Integer> position= new HashMap<String, Integer>();
 
     public WordData(){
-        position.put("title" , 0);
+        position.put("title", 0);
         position.put("h1" , 0);
         position.put("h2" , 0);
         position.put("h3" , 0);

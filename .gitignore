@@ -75,3 +75,8 @@ build/
 *.html
 *.xml
 *.xml
+
+### node modules ###
+!**/node_modules/
+
+
