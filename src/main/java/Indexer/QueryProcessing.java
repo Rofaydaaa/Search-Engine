@@ -275,10 +275,6 @@ public class QueryProcessing {
         if(this.correctResults.size() == 0){
             this.isValidSearch = false;
         }
-
-        
-
-        
         
     }
 }
