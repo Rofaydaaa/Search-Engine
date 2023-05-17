@@ -194,19 +194,34 @@ public class QueryProcessing {
         try {
             // Connect to the web page and retrieve its HTML
             Document document = Jsoup.parse(new File(filePath), "UTF-8");
-            //we will iterate over every element of the webPage and find the paragraph having any of the words
-            Elements elements = document.select("*");
-            for (Element element : elements) {
-                // Get the text of the element
-                String elementText = element.text();
 
-                // Check if any of the strings in the list are present in the element
-                for (String searchString : this.stemmedSearchWordsList) {
-                    if (elementText.contains(searchString)) {
-                        pageParagraph = elementText;
+            // Define the order of element types to search
+            String[] elementTypes = {"p", "span", "h1", "h2", "h3", "h4", "h5", "h6", "li", "dt"};
+
+            // Iterate over each element type
+            for (String elementType : elementTypes) {
+                // Select elements of the current type
+                Elements elements = document.select(elementType);
+
+                // Iterate over the selected elements
+                for (Element element : elements) {
+                    // Get the text of the element
+                    String elementText = element.text();
+
+                    // Check if any of the strings in the list are present in the element
+                    for (String searchString : this.stemmedSearchWordsList) {
+                        if (elementText.contains(searchString)) {
+                            pageParagraph = elementText;
+                            break;
+                        }
+                    }
+
+                    // If a matching element is found, exit the loop
+                    if (!pageParagraph.isEmpty()) {
                         break;
                     }
                 }
+
                 // If a matching element is found, exit the loop
                 if (!pageParagraph.isEmpty()) {
                     break;
