@@ -102,7 +102,7 @@ function ResultPage(props) {
                             <div className='Result-block'>
                                 <div className='Result-data'>
                                     <h4 className='Result-heading'>{res.title}</h4>
-                                    <a className='Result-URL'>{res.url}</a>
+                                    <a className='Result-URL'>{res.URL}</a>
                                     <p className='Result-paragraph'>
                                         {paragraphWithBoldWords(res.paragraph, searchTextCpy)}
                                     </p>
