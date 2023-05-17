@@ -27,8 +27,8 @@ public class QueryProcessing {
     PorterStemmer stemmer;
     Map<String, WordToSearch> rankingWordsInSearch;
     JSONArray returnedJsonArray;
-    Map<URLData, Double> rankingResults;
-    List<URLData> correctResults;
+    Map<WordData, Double> rankingResults;
+    List<WordData> correctResults;
     List<String> searchWordsList;
     List<String> stemmedSearchWordsList;
     boolean isValidSearch;
@@ -69,12 +69,7 @@ public class QueryProcessing {
         }
         if(this.stemmedSearchWordsList.isEmpty())
             return false;
-        for(String word : this.stemmedSearchWordsList){
-            WordToSearch wts = dbManager.getWordsDataCollection().getWordToSearch(word);
-            if(wts != null){
-                rankingWordsInSearch.put(word,wts);
-            }
-        }
+        rankingWordsInSearch = dbManager.getWordsDataCollection().getWordToSearch(this.stemmedSearchWordsList);
         return true;
     }
 
@@ -148,12 +143,12 @@ public class QueryProcessing {
 //         "title":"solving bugs"
 //         "URL":"programmingGeeksGeek.com"
 //         "paragraph":"100 coffee cup + 2 hours sleep/day + lots of cry + stack overflow = solved bug in 3 days"
-        for(URLData url : this.correctResults){
+        for(WordData url : this.correctResults){
             JSONObject jsonObject = new JSONObject();
-            if(url.URL == null)
+            if(url.url == null)
                 continue;
             jsonObject.put("title", getPageTitle(url));
-            jsonObject.put("URL", url.URL);
+            jsonObject.put("URL", url.url);
             jsonObject.put("paragraph", getParagraph(url));
             this.returnedJsonArray.put(jsonObject);
         }
@@ -174,9 +169,9 @@ public class QueryProcessing {
 
         return endTime - startTime;
     }
-    public String getPageTitle(URLData urlData){
+    public String getPageTitle(WordData urlData){
 
-        String filePath = urlData.FilePath;
+        String filePath = urlData.filepath;
         String pageTitle = "";
         try {
             // Connect to the web page and retrieve its HTML
@@ -188,8 +183,8 @@ public class QueryProcessing {
         return  pageTitle;
     }
 
-    public String getParagraph(URLData urlData) {
-        String filePath = urlData.FilePath;
+    public String getParagraph(WordData urlData) {
+        String filePath = urlData.filepath;
         String pageParagraph = "";
         try {
             // Connect to the web page and retrieve its HTML
@@ -240,9 +235,9 @@ public class QueryProcessing {
         //if they are the same add it to this array (this.correctResults), if not then continue
         //NOTE: if no web pages are found, set the this.isValidSearch = false;
 
-        for(Map.Entry<URLData, Double> entry : this.rankingResults.entrySet()){
-            URLData urlData = entry.getKey();
-            String filePath = urlData.FilePath;
+        for(Map.Entry<WordData, Double> entry : this.rankingResults.entrySet()){
+            WordData urlData = entry.getKey();
+            String filePath = urlData.filepath;
             if(filePath == null)
                 continue;
             try {

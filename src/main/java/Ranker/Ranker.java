@@ -1,5 +1,6 @@
 package Ranker;
 
+import CostumDataStructures.WordData;
 import CostumDataStructures.WordToSearch;
 import CostumDataStructures.URLData;
 import DataBase.DataBaseManager;
@@ -11,7 +12,7 @@ public class Ranker {
     Map<String,WordToSearch> WordData;
     int TotalNumberOfURLS = 6000;
 
-    public Map<String, Double> tf_IDF= new HashMap<>(){{put("", 0.0);}};
+    public Map<WordData, Double> tf_IDF= new HashMap<>();
     public Ranker(DataBaseManager db,Map<String,WordToSearch> wd){
         this.dbManager = db;
         this.WordData = wd;
@@ -23,10 +24,10 @@ public class Ranker {
             double IDF = (double)TotalNumberOfURLS/(entry.getValue().df);
             for (int i=0;i<entry.getValue().data.size();i++){
                 double TF = (double)entry.getValue().data.get(i).count/entry.getValue().data.get(i).lengthOfDoc;
-                if (tf_IDF.containsKey(entry.getValue().data.get(i).url)) {
-                    tf_IDF.put(entry.getValue().data.get(i).url, tf_IDF.get(entry.getValue().data.get(i).url) + IDF*TF*calculatePositionsWeight(word,i));
+                if (tf_IDF.containsKey(entry.getValue().data.get(i))) {
+                    tf_IDF.put(entry.getValue().data.get(i), tf_IDF.get(entry.getValue().data.get(i)) + IDF*TF*calculatePositionsWeight(word,i));
                 } else {
-                    tf_IDF.put(entry.getValue().data.get(i).url, IDF*TF*calculatePositionsWeight(word,i));
+                    tf_IDF.put(entry.getValue().data.get(i), IDF*TF*calculatePositionsWeight(word,i));
                 }
             }
         }
@@ -48,11 +49,10 @@ public class Ranker {
     }
 
     // sort the urls according to their relevance and include popularity in score
-    public Map<URLData, Double> sortUrls(){
-        Map<URLData, Double> sortedUrls = new HashMap<>();
-        for (Map.Entry<String, Double> entry : tf_IDF.entrySet()) {
-            URLData currentData =  dbManager.getUrlDataCollection().getURLData(entry.getKey());
-            sortedUrls.put( currentData, entry.getValue()*currentData.popularity);
+    public Map<WordData, Double> sortUrls(){
+        Map<WordData, Double> sortedUrls = new HashMap<>();
+        for (Map.Entry<WordData, Double> entry : tf_IDF.entrySet()) {
+            sortedUrls.put(entry.getKey(), entry.getValue()*entry.getKey().popularity);
         }
         // sort the urls according to their relevance
         sortedUrls = sortedUrls.entrySet().stream()
