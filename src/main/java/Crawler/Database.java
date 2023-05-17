@@ -52,9 +52,9 @@ public class Database {
     }
   }
 
-  public void addURL(String url, String fileName) {
+  public void addURL(String url, String fileName,String contentHash) {
     Document doc = new Document("url", url).append("visited", true).append("indexed", false)
-        .append("filepath", fileName).append("popularity", 0.0).append("hashcode", url.hashCode());
+        .append("filepath", fileName).append("popularity", 0.0).append("hashcode", url.hashCode()).append("contentHash", contentHash);
     linksPathCollection.insertOne(doc);
   }
 
@@ -125,5 +125,10 @@ public class Database {
 
   public void close() {
     mongoClient.close();
+  }
+
+  public boolean containsContentHash(String contentHash) {
+    Document query = new Document("content_hash", contentHash);
+    return linksPathCollection.find(query).first() != null;
   }
 }
