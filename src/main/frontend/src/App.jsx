@@ -9,8 +9,10 @@ import ResultPage from './Components/ResultPage';
 function App() {
     const [searchText, setSearchText] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [rerender, setRerender] = useState(false);
     const getResults = async (text) => {
         if(text){
+            setRerender(!rerender);
             const response = await api.post('/results', {suggestion: text});
             console.log(response.data);
             setSearchResults(response.data);
@@ -22,7 +24,7 @@ function App() {
                     <div className={"App-container"}>
                         <Routes>
                             <Route path="/" exact element={<SearchEngine handleSearch={setSearchText} getResults={getResults}/>}/>
-                            <Route path="/Results" exact element={<ResultPage searchResults={searchResults} getResults={getResults} handleSearch={setSearchText} searchText={searchText}/>}/>
+                            <Route path="/Results" exact element={<ResultPage searchResults={searchResults} getResults={getResults} rerender={rerender} handleSearch={setSearchText} searchText={searchText}/>}/>
                         </Routes>
                     </div>
             </Container>

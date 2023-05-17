@@ -23,12 +23,16 @@ function ResultPage(props) {
     }
 
     useEffect(() => {
-        if (props.searchResults.length > 0) {
-            setIsLoading(true);
-            setSearchResults([]);
-            setTime(0);
-        }
-    }, [props.searchResults]);
+        setIsLoading(true);
+        setSearchResults([]);
+        setTime(0);
+    },[]);
+
+    useEffect(() => {
+        setIsLoading(true);
+        setSearchResults([]);
+        setTime(0);
+    }, [props.rerender]);
 
     useEffect(() => {
         if (isLoading && searchResults.length === 0 && props.searchResults.length > 0) {
@@ -46,7 +50,7 @@ function ResultPage(props) {
 
             setIsLoading(false);
         }
-    }, [isLoading, props.searchResults, searchResults.length, props.searchText]);
+    }, [props.searchResults]);
 
     useEffect(() => {
         disableSuggestions(false);
