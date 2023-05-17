@@ -19,7 +19,7 @@ public class IndexerForSingleDoc {
     // "apple"-> {"word" = "apple", "df" = count, "data"= vector<WordData>}
     //List and maps for text storage
     //to store all the word with it data structure
-    Map<String,WordData> documentWordsDataMap;
+    Map<String,WordToSearch> documentWordsDataMap;
     //list to store title Words
     List<String> titleWords;
     //list of lists to store headers words from <h1> -----> <h6>, every row represent a header
@@ -31,22 +31,22 @@ public class IndexerForSingleDoc {
     PorterStemmer stemmer;
 
     int lengthOfDocument;
-    IndexerForSingleDoc(URLData urlD){
+    IndexerForSingleDoc(){
 
         //build stopping word tries for fast search
         buildStoppingWord();
 
         //assign data members
-        this.currentUrlData = urlD;
-
+        this.documentWordsDataMap = new HashMap<>();
         this.stemmer = new PorterStemmer();
-        lengthOfDocument = 0;
-        documentWordsDataMap = new HashMap<>();
-
-        spamThreshold = 0.6;
+        this.spamThreshold = 0.6;
     }
 
-    public void index(){
+    public void index(URLData urlD){
+        //clean up for the used data memebr
+        this.currentUrlData = urlD;
+        this.lengthOfDocument = 0;
+        this.isSpam = false;
         parseDocumentFromLocalFile();
         extractAllData();
         addAllDataToDocumentWordsDataMap();
@@ -84,7 +84,7 @@ public class IndexerForSingleDoc {
     public boolean isSpamDoc(){
         return isSpam;
     }
-    public Map<String,WordData> getWordHashTable(){
+    public Map<String,WordToSearch> getWordHashTable(){
         return documentWordsDataMap;
     }
     public void extractDataTitle(){
@@ -119,34 +119,46 @@ public class IndexerForSingleDoc {
         lengthOfDocument += paragraphWords.size();
     }
 
-    public WordData stemAndUpdate(String word, String element){
+    public String stemAndUpdate(String word, String element){
         word = stemmer.stem(word);
-        WordData currentWordData = documentWordsDataMap.get(word);
-        if(currentWordData  == null)//if the word is not in the map yet
+        WordToSearch currentWordToSearch = documentWordsDataMap.get(word);
+        if(currentWordToSearch  == null)//if the word is not in the map yet
         {
-            //create new word data
+            //create new word to search
+            currentWordToSearch = new WordToSearch();
+            currentWordToSearch.word = word;
+            currentWordToSearch.df = 0;
+            currentWordToSearch.dataMap = new HashMap<>();
+        }
+        WordData currentWordData = documentWordsDataMap.get(word).dataMap.get(this.currentUrlData.URL);
+        if(currentWordData == null){
             currentWordData = new WordData();
             currentWordData.url = currentUrlData.URL;
             currentWordData.filepath = currentUrlData.FilePath;
             currentWordData.count = 0;
             currentWordData.lengthOfDoc = lengthOfDocument;
             currentWordData.popularity = currentUrlData.popularity;
+            currentWordToSearch.df += 1;
         }
         //update the current word data
         currentWordData.count += 1;
         currentWordData.position.put(element , currentWordData.position.get(element)+1);
-        documentWordsDataMap.put(word,currentWordData);
+        currentWordToSearch.dataMap.put(this.currentUrlData.URL, currentWordData);
+        documentWordsDataMap.put(word,currentWordToSearch);
 
-        return currentWordData;
+        return word;
     }
     public void addTitleToDocumentWordsDataMap(){
         for(String word : titleWords)
         {
-            WordData currentWordData = stemAndUpdate(word, "title");
-            if(currentWordData.count >= lengthOfDocument*spamThreshold)
+            String currentWordString = stemAndUpdate(word, "title");
+            if(this.documentWordsDataMap.get(currentWordString).dataMap.get(currentWordString).count >= lengthOfDocument*spamThreshold)
             {
                 isSpam = true;
                 return;
+            }
+            if(currentWordString.length() <= 2){
+                this.documentWordsDataMap.remove(currentWordString);
             }
         }
     }
@@ -156,11 +168,14 @@ public class IndexerForSingleDoc {
         {
             for (String word : headerWords.get(i))
             {
-                WordData currentWordData = stemAndUpdate(word, "h"+(i+1));
-                if(currentWordData.count >= lengthOfDocument*spamThreshold)
+                String currentWordString = stemAndUpdate(word, "h"+(i+1));
+                if(this.documentWordsDataMap.get(currentWordString).dataMap.get(currentWordString).count >= lengthOfDocument*spamThreshold)
                 {
                     isSpam = true;
                     return;
+                }
+                if(currentWordString.length() <= 2){
+                    this.documentWordsDataMap.remove(currentWordString);
                 }
             }
         }
@@ -169,11 +184,14 @@ public class IndexerForSingleDoc {
 
         for(String word : paragraphWords)
         {
-            WordData currentWordData = stemAndUpdate(word, "body");
-            if(currentWordData.count >= lengthOfDocument*spamThreshold)
+            String currentWordString = stemAndUpdate(word, "body");
+            if(this.documentWordsDataMap.get(currentWordString).dataMap.get(currentWordString).count >= lengthOfDocument*spamThreshold)
             {
                 isSpam = true;
                 return;
+            }
+            if(currentWordString.length() <= 2){
+                this.documentWordsDataMap.remove(currentWordString);
             }
         }
     }
@@ -187,8 +205,8 @@ public class IndexerForSingleDoc {
     }
     public String dataPreProcessingForString(String s){
         // \W, is equivalent to [^a-zA-Z0-9] regular expression
-        // replace any non-word character with spaces
-        s = s.replaceAll("\\W", " ");
+        // Remove non-word characters and numbers
+        s = s.replaceAll("[\\W\\d]", " ");
 
         //remove first and last spaces, remove any leading spaces
         s = s.trim().replaceAll(" +", " ");
