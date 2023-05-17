@@ -69,12 +69,7 @@ public class QueryProcessing {
         }
         if(this.stemmedSearchWordsList.isEmpty())
             return false;
-        for(String word : this.stemmedSearchWordsList){
-            WordToSearch wts = dbManager.getWordsDataCollection().getWordToSearch(word);
-            if(wts != null){
-                rankingWordsInSearch.put(word,wts);
-            }
-        }
+        rankingWordsInSearch = dbManager.getWordsDataCollection().getWordToSearch(this.stemmedSearchWordsList);
         return true;
     }
 

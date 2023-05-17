@@ -5,7 +5,9 @@ import CostumDataStructures.WordToSearch;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.*;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,7 @@ public class WordsDataCollection {
     MongoDatabase SearchEngineDB;
     MongoCollection<Document> wordsDataCollection;
 
-//           {
+    //           {
 //        "word": "string",
 //            "dataFrequency": "number",
 //            "documents": [   // nested documents?? list
@@ -46,7 +48,7 @@ public class WordsDataCollection {
 
     /////////////////////////////////ANY QUERY ON WORDS COLLECTION SHOULD BE WRITTEN HERE/////////////////////////////////
 
-    public void updateWordToSearchData(String word, WordData data){
+    public void updateWordToSearchData(String word, WordData data) {
         Document newDocument = new Document()
                 .append("count", data.count)
                 .append("url", data.url)
@@ -58,7 +60,7 @@ public class WordsDataCollection {
         //get the word needed for update
         Document result = wordsDataCollection.find(query).first();
         //if the word is already in the database
-        if(result != null){
+        if (result != null) {
             //Increment the dataFrequency by 1
             int dataFrequency = result.getInteger("dataFrequency", 0);
             int updatedDataFrequency = dataFrequency + 1;
@@ -68,7 +70,7 @@ public class WordsDataCollection {
             wordsDataCollection.updateOne(query, update);
         }
         //if the word is not in the database, add one
-        else{
+        else {
             Document newWord = new Document("word", word)
                     .append("dataFrequency", 1)
                     .append("documents", new ArrayList<>(List.of(newDocument)));
@@ -76,7 +78,7 @@ public class WordsDataCollection {
         }
     }
 
-    public void insertWordHashMap(Map<String, WordToSearch> mapToInsert){
+    public void insertWordHashMap(Map<String, WordToSearch> mapToInsert) {
         List<Document> documentsList = new ArrayList<>();
         for (Map.Entry<String, WordToSearch> entry : mapToInsert.entrySet()) {
             WordToSearch wordToSearch = entry.getValue();
@@ -104,46 +106,46 @@ public class WordsDataCollection {
         }
         this.wordsDataCollection.insertMany(documentsList);
     }
+
     // fill WordToSearch object
     // TODO: change this to be used in query processor to get words in search query
-    public Map<String,WordToSearch> getWordMapToSearch() {
-        Map<String,WordToSearch> map = new HashMap();
+    public Map<String, WordToSearch> getWordMapToSearch() {
+        Map<String, WordToSearch> map = new HashMap();
         try (MongoCursor<Document> cur = this.wordsDataCollection.find().cursor()) {
             while (cur.hasNext()) {
                 Document doc = cur.next();
                 WordToSearch word = new WordToSearch();
-                word.word= doc.getString("word");
-                word.df= doc.getInteger("dataFrequency");
+                word.word = doc.getString("word");
+                word.df = doc.getInteger("dataFrequency");
                 List<Document> nestedDocs = doc.getList("documents", Document.class);
                 for (Document nestedDoc : nestedDocs) {
                     WordData wd = new WordData(nestedDoc);
                     word.data.add(wd);
                 }
-                map.put(word.word,word);
+                map.put(word.word, word);
             }
         }
         return map;
     }
 
-    //This function get a stemmed word and return the record corresponding to it
-    public WordToSearch getWordToSearch(String word){
-
-        // Create the query
-        Document query = new Document("word", word);
-        // get the matching document
-        Document result = this.wordsDataCollection.find(query).first();
-        WordToSearch wordToSearch = null;
-        if(result!=null){
-            wordToSearch = new WordToSearch();
-            wordToSearch.word = word;
-            wordToSearch.df = result.getInteger("dataFrequency");
-            wordToSearch.data = new Vector<>();
-            List<Document> nestedDocs = result.getList("documents", Document.class);
-            for (Document nestedDoc : nestedDocs) {
-                WordData wd = new WordData(nestedDoc);
-                wordToSearch.data.add(wd);
+    public Map<String, WordToSearch> getWordToSearch(List<String> words) {
+        Bson filter = Filters.in("word", words);
+        Bson projection = Projections.include("word", "dataFrequency", "documents");
+        Map<String, WordToSearch> map = new HashMap<>();
+        try (MongoCursor<Document> cursor = this.wordsDataCollection.find(filter).projection(projection).iterator()) {
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                WordToSearch word = new WordToSearch();
+                word.word = doc.getString("word");
+                word.df = doc.getInteger("dataFrequency");
+                List<Document> nestedDocs = doc.getList("documents", Document.class);
+                for (Document nestedDoc : nestedDocs) {
+                    WordData wd = new WordData(nestedDoc);
+                    word.data.add(wd);
+                }
+                map.put(word.word, word);
             }
         }
-        return wordToSearch;
+        return map;
     }
 }
