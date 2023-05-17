@@ -32,7 +32,7 @@ public class HistoryDataCollection {
         }
 
         // Prepare the filter to check if searchText already exists
-        Document filter = new Document("searchText", searchString);
+        Document filter = new Document("suggestion", searchString);
 
         // Find the document with the matching filter
         Document existingDocument = historyDataCollection.find(filter).first();
@@ -45,7 +45,7 @@ public class HistoryDataCollection {
             // Insert the new documents as a list
             Document resultDocument = new Document("result", documents)
                     .append("historyRank", rank)
-                    .append("searchText", searchString);
+                    .append("suggestion", searchString);
             historyDataCollection.insertOne(resultDocument);
         }
     }

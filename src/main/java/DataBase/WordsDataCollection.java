@@ -76,6 +76,34 @@ public class WordsDataCollection {
         }
     }
 
+    public void insertWordHashMap(Map<String, WordToSearch> mapToInsert){
+        List<Document> documentsList = new ArrayList<>();
+        for (Map.Entry<String, WordToSearch> entry : mapToInsert.entrySet()) {
+            WordToSearch wordToSearch = entry.getValue();
+            Document document = new Document();
+            document.append("word", wordToSearch.word)
+                    .append("dataFrequency", wordToSearch.df);
+
+            // Convert WordData objects to Document and add to the list
+            List<Document> wordDataDocuments = new ArrayList<>();
+            for (WordData wordData : wordToSearch.dataMap.values()) {
+                Document wordDataDocument = new Document();
+                wordDataDocument.append("count", wordData.count)
+                        .append("url", wordData.url)
+                        .append("popularity", wordData.popularity)
+                        .append("lengthOfDocument", wordData.lengthOfDoc)
+                        .append("filePath", wordData.filepath)
+                        .append("position", wordData.position);
+
+                wordDataDocuments.add(wordDataDocument);
+            }
+
+            document.append("documents", wordDataDocuments);
+
+            documentsList.add(document);
+        }
+        this.wordsDataCollection.insertMany(documentsList);
+    }
     // fill WordToSearch object
     // TODO: change this to be used in query processor to get words in search query
     public Map<String,WordToSearch> getWordMapToSearch() {

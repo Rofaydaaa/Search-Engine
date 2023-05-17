@@ -140,7 +140,7 @@ function SearchBar(props) {
         setSearchText('');
     }
 
-    const addSuggestions = async() => {
+    /*const addSuggestions = async() => {
         try {
             const response = await api.post('/suggestions', {suggestion: searchText});
             console.log(response.data);
@@ -148,6 +148,10 @@ function SearchBar(props) {
         catch (error) {
             console.log(error);
         }
+    }*/
+
+    const addSuggestions = () => {
+        props.getResults(searchText);
     }
 
     function handleSearchButtonClick() {

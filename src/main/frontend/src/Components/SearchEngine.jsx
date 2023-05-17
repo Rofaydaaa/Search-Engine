@@ -10,6 +10,11 @@ function SearchEngine(props) {
     const handleSearch = (searchText) =>{
         setShouldNavigate(true);
         props.handleSearch(searchText);
+        console.log(searchText);
+    }
+
+    const getResults = (text) => {
+        props.getResults(text);
     }
 
     return (
@@ -21,7 +26,8 @@ function SearchEngine(props) {
             searchText={''}
             handleSearch={handleSearch}
             suggestionsFlag={suggestFlag}
-            setFlag={setSuggestFlag}/>
+            setFlag={setSuggestFlag}
+            getResults={getResults}/>
             {shouldNavigate && <Navigate to='/Results'/>}
         </div>
     );

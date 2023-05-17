@@ -11,8 +11,8 @@ import java.util.Vector;
 public class Indexer {
 
     DataBaseManager dbManager;
-    Map<String, WordData> answerMap;
-    List<String> spamUrls;
+    Map<String, WordToSearch> answerMap;
+    Vector<String> spamUrls;
 
     Indexer(DataBaseManager db) {
 
@@ -37,22 +37,30 @@ public class Indexer {
             if (indexerForSingleDoc.isSpamDoc())
                 //add to Spam the vector
                 indexer.spamUrls.add(url.URL);
-            else {
+            //{
                 //Add the wordDataMap to the wordsDataCollection
-                Map<String, WordData> map = indexerForSingleDoc.getWordHashTable();
-
-                for (Map.Entry<String, WordData> entry : map.entrySet()) {
-                    indexer.dbManager.getWordsDataCollection().updateWordToSearchData(entry.getKey(), entry.getValue());
-                }
-
-                //update index URL
-                indexer.dbManager.getUrlDataCollection().updateIndex(url.URL);
+//                Map<String, WordData> map = indexerForSingleDoc.getWordHashTable();
+//
+//                for (Map.Entry<String, WordData> entry : map.entrySet()) {
+//                    indexer.dbManager.getWordsDataCollection().updateWordToSearchData(entry.getKey(), entry.getValue());
+//                }
+//
+//                //update index URL
+//                indexer.dbManager.getUrlDataCollection().updateIndex(url.URL);
+//            }
             }
+        //Insert the spam to the database
+        //check is there is spam
+        if(!indexer.spamUrls.isEmpty())
+            indexer.dbManager.getSpamDataCollection().insertVectorSpamUrls(indexer.spamUrls);
+        //Insert the hashMap to the table
+        indexer.dbManager.getWordsDataCollection().insertWordHashMap(indexerForSingleDoc.getWordHashTable());
+        //update indexed
+        indexer.dbManager.getUrlDataCollection().updateAllIndex();
 
-            PageRank pageRank = new PageRank();
+        PageRank pageRank = new PageRank(indexer.dbManager);
 
         }
-    }
 }
 
 //To test a specific web page

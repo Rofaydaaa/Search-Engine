@@ -18,8 +18,9 @@ public class PageRank {
 
     double d = 0.85;
 
-    public PageRank(){
+    public PageRank(DataBaseManager db){
 
+        this.dbManager = db;
         List<String> URLS = dbManager.getUrlDataCollection().getAllURLs();
 
         for (String url:URLS){
