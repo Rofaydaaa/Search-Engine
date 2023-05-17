@@ -243,6 +243,8 @@ public class QueryProcessing {
         for(Map.Entry<URLData, Double> entry : this.rankingResults.entrySet()){
             URLData urlData = entry.getKey();
             String filePath = urlData.FilePath;
+            if(filePath == null)
+                continue;
             try {
                 Document currentDoc = Jsoup.parse(new File(filePath), "UTF-8");
                 String docText = currentDoc.text();
