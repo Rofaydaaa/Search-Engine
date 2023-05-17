@@ -28,6 +28,7 @@ public class IndexerForSingleDoc {
     List<String> paragraphWords;
     boolean isSpam;
     double spamThreshold;
+    double spamThresholdLength;
     PorterStemmer stemmer;
 
     int lengthOfDocument;
@@ -40,6 +41,7 @@ public class IndexerForSingleDoc {
         this.documentWordsDataMap = new HashMap<>();
         this.stemmer = new PorterStemmer();
         this.spamThreshold = 0.6;
+        spamThresholdLength = 1000;
     }
 
     public void index(URLData urlD){
@@ -129,6 +131,7 @@ public class IndexerForSingleDoc {
             currentWordToSearch.word = word;
             currentWordToSearch.df = 0;
             currentWordToSearch.dataMap = new HashMap<>();
+            documentWordsDataMap.put(word,currentWordToSearch);
         }
         WordData currentWordData = documentWordsDataMap.get(word).dataMap.get(this.currentUrlData.URL);
         if(currentWordData == null){
@@ -152,7 +155,7 @@ public class IndexerForSingleDoc {
         for(String word : titleWords)
         {
             String currentWordString = stemAndUpdate(word, "title");
-            if(this.documentWordsDataMap.get(currentWordString).dataMap.get(currentWordString).count >= lengthOfDocument*spamThreshold)
+            if(this.documentWordsDataMap.get(currentWordString).dataMap.get(this.currentUrlData.URL).count >= lengthOfDocument*spamThreshold && lengthOfDocument > spamThresholdLength )
             {
                 isSpam = true;
                 return;
@@ -169,8 +172,7 @@ public class IndexerForSingleDoc {
             for (String word : headerWords.get(i))
             {
                 String currentWordString = stemAndUpdate(word, "h"+(i+1));
-                if(this.documentWordsDataMap.get(currentWordString).dataMap.get(currentWordString).count >= lengthOfDocument*spamThreshold)
-                {
+                if(this.documentWordsDataMap.get(currentWordString).dataMap.get(this.currentUrlData.URL).count >= lengthOfDocument*spamThreshold) {
                     isSpam = true;
                     return;
                 }
@@ -185,7 +187,7 @@ public class IndexerForSingleDoc {
         for(String word : paragraphWords)
         {
             String currentWordString = stemAndUpdate(word, "body");
-            if(this.documentWordsDataMap.get(currentWordString).dataMap.get(currentWordString).count >= lengthOfDocument*spamThreshold)
+            if(this.documentWordsDataMap.get(currentWordString).dataMap.get(this.currentUrlData.URL).count >= lengthOfDocument*spamThreshold)
             {
                 isSpam = true;
                 return;

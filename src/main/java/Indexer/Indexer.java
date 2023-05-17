@@ -39,11 +39,15 @@ public class Indexer {
                 indexer.spamUrls.add(url.URL);
             }
         //Insert the spam to the database
-        indexer.dbManager.getSpamDataCollection().insertVectorSpamUrls(indexer.spamUrls);
+        //check is there is spam
+        if(!indexer.spamUrls.isEmpty())
+            indexer.dbManager.getSpamDataCollection().insertVectorSpamUrls(indexer.spamUrls);
         //Insert the hashMap to the table
         indexer.dbManager.getWordsDataCollection().insertWordHashMap(indexerForSingleDoc.getWordHashTable());
+        //update indexed
+        indexer.dbManager.getUrlDataCollection().updateAllIndex();
 
-        PageRank pageRank = new PageRank();
+        PageRank pageRank = new PageRank(indexer.dbManager);
 
         }
 }

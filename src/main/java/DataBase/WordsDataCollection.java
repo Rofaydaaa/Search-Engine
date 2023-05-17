@@ -86,7 +86,7 @@ public class WordsDataCollection {
 
             // Convert WordData objects to Document and add to the list
             List<Document> wordDataDocuments = new ArrayList<>();
-            for (WordData wordData : wordToSearch.data) {
+            for (WordData wordData : wordToSearch.dataMap.values()) {
                 Document wordDataDocument = new Document();
                 wordDataDocument.append("count", wordData.count)
                         .append("url", wordData.url)
