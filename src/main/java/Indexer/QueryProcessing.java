@@ -210,7 +210,7 @@ public class QueryProcessing {
 
                     // Check if any of the strings in the list are present in the element
                     for (String searchString : this.stemmedSearchWordsList) {
-                        if (elementText.contains(searchString)) {
+                        if (elementText.toLowerCase().contains(searchString.toLowerCase())) {
                             pageParagraph = elementText;
                             break;
                         }
