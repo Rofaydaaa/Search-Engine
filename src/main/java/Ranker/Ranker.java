@@ -21,14 +21,14 @@ public class Ranker {
     public void CalculateRelevance() {
         for (Map.Entry<String,WordToSearch> entry : WordData.entrySet()) {
             String word = entry.getKey();
-            double IDF = (double)TotalNumberOfURLS/(entry.getValue().df);
+            double IDF = (double)(TotalNumberOfURLS/(entry.getValue().df))*10;
             int containedInURL = 1;
             for (int i=0;i<entry.getValue().data.size();i++){
                 if (entry.getValue().data.get(i).url.contains(word))
-                    containedInURL = 1000;
+                    containedInURL = 100;
                 else
                     containedInURL = 1;
-                double TF = (double)(entry.getValue().data.get(i).count/entry.getValue().data.get(i).lengthOfDoc) * 0.1;
+                double TF = (double)(entry.getValue().data.get(i).count/entry.getValue().data.get(i).lengthOfDoc);
                 if (tf_IDF.containsKey(entry.getValue().data.get(i))) {
                     tf_IDF.put(entry.getValue().data.get(i), 1000*(tf_IDF.get(entry.getValue().data.get(i)) + IDF*TF*calculatePositionsWeight(word,i)*containedInURL));
                 } else {
