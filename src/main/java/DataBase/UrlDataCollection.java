@@ -85,6 +85,6 @@ public class UrlDataCollection {
         urlDataCollection.updateOne(Filters.eq("url", URL), Updates.set("indexed", 1));
     }
     public void updateAllIndex() {
-        urlDataCollection.updateMany(new Document(), Updates.set("indexed", false));
+        urlDataCollection.updateMany(new Document(), Updates.set("indexed", true));
     }
 }

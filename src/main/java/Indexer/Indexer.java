@@ -29,8 +29,8 @@ public class Indexer {
 
         Indexer indexer = new Indexer(new DataBaseManager());
         //Start Ranking the page first.
-        //PageRank pageRank = new PageRank(indexer.dbManager);
-        //System.out.println("Done With PageRanker");
+        PageRank pageRank = new PageRank(indexer.dbManager);
+        System.out.println("Done With PageRanker");
         List<URLData> urls = indexer.getUrlList();
         IndexerForSingleDoc indexerForSingleDoc = new IndexerForSingleDoc();
         int i = 0;
