@@ -28,9 +28,9 @@ public class Ranker {
                     containedInURL = 1000;
                 else
                     containedInURL = 1;
-                double TF = (double)entry.getValue().data.get(i).count/entry.getValue().data.get(i).lengthOfDoc;
+                double TF = (double)(entry.getValue().data.get(i).count/entry.getValue().data.get(i).lengthOfDoc) * 0.1;
                 if (tf_IDF.containsKey(entry.getValue().data.get(i))) {
-                    tf_IDF.put(entry.getValue().data.get(i), tf_IDF.get(entry.getValue().data.get(i)) + IDF*TF*calculatePositionsWeight(word,i)*containedInURL);
+                    tf_IDF.put(entry.getValue().data.get(i), 1000*(tf_IDF.get(entry.getValue().data.get(i)) + IDF*TF*calculatePositionsWeight(word,i)*containedInURL));
                 } else {
                     tf_IDF.put(entry.getValue().data.get(i), IDF*TF*calculatePositionsWeight(word,i)*containedInURL);
                 }
@@ -42,13 +42,13 @@ public class Ranker {
     public double calculatePositionsWeight(String word,int doc)
     {
         double totalWeight= 0;
-        totalWeight+=(WordData.get(word).data.get(doc).position.get("title")==null)?0:WordData.get(word).data.get(doc).position.get("title")*15;
-        totalWeight+=(WordData.get(word).data.get(doc).position.get("h1")==null)?0:WordData.get(word).data.get(doc).position.get("h1")*6;
-        totalWeight+=(WordData.get(word).data.get(doc).position.get("h2")==null)?0:WordData.get(word).data.get(doc).position.get("h2")*5;
-        totalWeight+=(WordData.get(word).data.get(doc).position.get("h3")==null)?0:WordData.get(word).data.get(doc).position.get("h3")*4;
-        totalWeight+=(WordData.get(word).data.get(doc).position.get("h4")==null)?0:WordData.get(word).data.get(doc).position.get("h4")*3;
-        totalWeight+=(WordData.get(word).data.get(doc).position.get("h5")==null)?0:WordData.get(word).data.get(doc).position.get("h5")*2;
-        totalWeight+=(WordData.get(word).data.get(doc).position.get("h6")==null)?0:WordData.get(word).data.get(doc).position.get("h6")*1.5;
+        totalWeight+=(WordData.get(word).data.get(doc).position.get("title")==null)?0:WordData.get(word).data.get(doc).position.get("title")*150;
+        totalWeight+=(WordData.get(word).data.get(doc).position.get("h1")==null)?0:WordData.get(word).data.get(doc).position.get("h1")*36;
+        totalWeight+=(WordData.get(word).data.get(doc).position.get("h2")==null)?0:WordData.get(word).data.get(doc).position.get("h2")*25;
+        totalWeight+=(WordData.get(word).data.get(doc).position.get("h3")==null)?0:WordData.get(word).data.get(doc).position.get("h3")*19;
+        totalWeight+=(WordData.get(word).data.get(doc).position.get("h4")==null)?0:WordData.get(word).data.get(doc).position.get("h4")*12;
+        totalWeight+=(WordData.get(word).data.get(doc).position.get("h5")==null)?0:WordData.get(word).data.get(doc).position.get("h5")*10;
+        totalWeight+=(WordData.get(word).data.get(doc).position.get("h6")==null)?0:WordData.get(word).data.get(doc).position.get("h6")*5;
         totalWeight+=(WordData.get(word).data.get(doc).position.get("body")==null)?0:WordData.get(word).data.get(doc).position.get("body");
         return totalWeight;
     }

@@ -297,7 +297,7 @@ public class QueryProcessing {
 //                            }
                             pageParagraph = elementText;
                             if(pageParagraph.length() > 300)
-                                pageParagraph = extractTextWithWord(pageParagraph, searchString, 300);
+                                pageParagraph = extractTextWithWord(pageParagraph, searchString, 135);
                             break;
                         }
 
