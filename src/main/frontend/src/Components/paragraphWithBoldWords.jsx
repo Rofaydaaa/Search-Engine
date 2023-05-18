@@ -1,8 +1,12 @@
+import { stemmer } from 'stemmer';
 import "./Styles/paragraphWithBoldWords.css"
 
 function exactMatch(word, boldWords) {
+    const stemmedWord = stemmer(word);
     for (let i = 0; i < boldWords.length; i++) {
-        if (word.match(new RegExp(boldWords[i],"i"))) {
+        if (stemmedWord.match(new RegExp("\\b" + stemmer(boldWords[i]) + "\\b","i")) && stemmer(boldWords[i])) {
+            console.log(stemmedWord);
+            console.log(stemmer(boldWords[i]))
             return true;
         }
     }
@@ -10,10 +14,8 @@ function exactMatch(word, boldWords) {
 }
 
 function paragraphWithBoldWords(paragraph, boldWords) {
-    
-    if(boldWords.startsWith('"') && boldWords.endsWith('"')){
-        boldWords = boldWords.substring(1, boldWords.length - 1);
-    }
+
+    boldWords = boldWords.replace(/"/g, '');
 
     const boldArr = boldWords.split(' ');
     // Split the paragraph into an array of words and map over it
@@ -25,7 +27,6 @@ function paragraphWithBoldWords(paragraph, boldWords) {
         // Otherwise, return the word as a normal text node
         return word + " ";
     });
-
     // Join the array of words back into a string and render it inside a p element
     return <p className="boldP">{boldParagraph}</p>;
 }
