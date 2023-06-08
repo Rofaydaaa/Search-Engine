@@ -35,7 +35,7 @@ The ranker module is responsible for sorting documents based on their popularity
 ### HREF collection
 ![Alt Text](pictures/Href.png)
 ### Word Collection
-![Alt Text](pictures/Word.png)
+![Alt Text](pictures/word.png)
 
 #### The project support up to 6k url documents, 260k words documents and 270k href documents
 
